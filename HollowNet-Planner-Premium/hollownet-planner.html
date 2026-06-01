@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HollowNet Planner | House in the Hollow Automation Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#070708;
+  --surface:#0e0e10;
+  --surface-2:#141417;
+  --surface-3:#1c1918;
+  --line:#2a2421;
+  --line-bright:#483a30;
+  --ivory:#eee3cf;
+  --text:#d9d0c3;
+  --muted:#948b7d;
+  --gold:#ba9760;
+  --gold-bright:#dec089;
+  --gold-soft:rgba(186,151,96,.15);
+  --red:#81251f;
+  --red-bright:#ad3a2e;
+  --red-soft:rgba(129,37,31,.18);
+  --green:#55715e;
+  --blue:#536a82;
+  --shadow:0 20px 60px rgba(0,0,0,.44);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 52% -10%, rgba(173,58,46,.09), transparent 34%),
+    radial-gradient(circle at 12% 10%, rgba(186,151,96,.05), transparent 25%),
+    linear-gradient(180deg,#050506,var(--black) 240px,#09090b);
+  color:var(--text);
+  font-family:Inter, Arial, sans-serif;
+  min-height:100vh;
+}
+body::before{
+  content:"";
+  pointer-events:none;
+  position:fixed;
+  inset:0;
+  opacity:.14;
+  background-image:radial-gradient(rgba(238,227,207,.18) .7px, transparent .7px);
+  background-size:4px 4px;
+  z-index:0;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--gold-bright);text-decoration:none}
+a:hover{text-decoration:underline}
+.shell{position:relative;z-index:1;max-width:1660px;margin:0 auto;padding:0 28px 36px}
+.hero{
+  min-height:250px;
+  border-bottom:1px solid var(--line);
+  display:grid;
+  grid-template-columns:minmax(360px,680px) 1fr;
+  align-items:center;
+  gap:52px;
+  padding:22px 0 18px;
+}
+.logo{
+  width:min(100%,690px);
+  height:216px;
+  object-fit:contain;
+  object-position:left center;
+  filter:drop-shadow(0 16px 30px rgba(0,0,0,.65));
+}
+.hero-copy{
+  padding:12px 0 0;
+  max-width:540px;
+}
+.eyebrow{
+  font-family:Cinzel, Georgia, serif;
+  color:var(--gold);
+  letter-spacing:.24em;
+  font-size:11px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.hero-copy h1{
+  margin:0 0 12px;
+  color:var(--ivory);
+  font-family:Cinzel, Georgia, serif;
+  font-weight:500;
+  line-height:1.18;
+  font-size:clamp(25px,2.1vw,34px);
+  letter-spacing:.04em;
+}
+.hero-copy p{
+  margin:0 0 22px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line-bright);
+  background:#151311;
+  color:var(--text);
+  padding:11px 16px;
+  border-radius:10px;
+  font-weight:600;
+  transition:.18s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.btn:hover{
+  text-decoration:none;
+  border-color:var(--gold);
+  color:var(--ivory);
+  background:#1d1814;
+  transform:translateY(-1px);
+}
+.btn.primary{
+  background:linear-gradient(135deg,#6d201d,var(--red));
+  border-color:#9a3d32;
+  color:#f2e7d3;
+}
+.btn.primary:hover{background:linear-gradient(135deg,#81251f,var(--red-bright))}
+.btn.quiet{background:transparent;color:var(--muted)}
+.btn.danger:hover{border-color:var(--red-bright);color:#f0bbb2;background:var(--red-soft)}
+.topline{
+  margin:24px 0 18px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:22px;
+}
+.topline h2{
+  margin:0;
+  font-family:Cinzel, Georgia, serif;
+  font-size:20px;
+  color:var(--ivory);
+  font-weight:500;
+  letter-spacing:.07em;
+}
+.topline .small{margin-top:6px}
+.small{color:var(--muted);font-size:12px;line-height:1.5}
+.storage-mark{
+  display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;
+}
+.storage-mark::before{
+  content:"";width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 9px rgba(85,113,94,.65);
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(115px,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+.stat{
+  background:linear-gradient(145deg,rgba(20,20,23,.9),rgba(12,12,14,.96));
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:16px 17px 14px;
+  min-height:90px;
+  position:relative;
+  overflow:hidden;
+}
+.stat::after{
+  content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;
+  background:linear-gradient(90deg,var(--red),transparent);
+  opacity:.62;
+}
+.stat.gold::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.stat b{
+  display:block;
+  color:var(--ivory);
+  font-size:30px;
+  font-weight:500;
+  font-family:Cinzel,Georgia,serif;
+  letter-spacing:.04em;
+}
+.stat span{
+  display:block;margin-top:6px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.15em;font-size:10px;
+}
+.workbench{
+  display:grid;
+  grid-template-columns:414px minmax(600px,1fr);
+  gap:18px;
+  align-items:start;
+}
+.panel{
+  background:rgba(14,14,16,.93);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.form-panel{
+  padding:0 18px 20px;
+  position:sticky;
+  top:16px;
+  max-height:calc(100vh - 28px);
+  overflow:auto;
+  scrollbar-color:var(--line-bright) transparent;
+}
+.panel-head{
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:linear-gradient(180deg,#101012 78%,rgba(16,16,18,0));
+  padding:21px 0 18px;
+  margin-bottom:0;
+}
+.panel-head h3{
+  margin:0;
+  color:var(--ivory);
+  font-family:Cinzel,Georgia,serif;
+  letter-spacing:.08em;
+  font-weight:500;
+  font-size:17px;
+}
+.panel-head .small{margin-top:5px}
+.form-section{
+  font-family:Cinzel,Georgia,serif;
+  font-size:11px;
+  color:var(--gold);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  margin:17px 0 10px;
+  padding:14px 0 0;
+  border-top:1px solid var(--line);
+}
+.field{margin:0 0 11px}
+label{
+  display:block;
+  color:#a99d8c;
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  margin:0 0 6px;
+}
+input,select,textarea{
+  width:100%;
+  color:var(--text);
+  background:#09090b;
+  border:1px solid #302b28;
+  border-radius:9px;
+  padding:10px 11px;
+  outline:none;
+  transition:border .16s, box-shadow .16s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(186,151,96,.12);
+}
+input::placeholder,textarea::placeholder{color:#605a53}
+textarea{resize:vertical;min-height:68px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.id-preview{
+  color:var(--muted);
+  background:#0b0b0d;
+  border:1px dashed var(--line-bright);
+  border-radius:9px;
+  font-size:12px;
+  padding:8px 10px;
+  margin-top:7px;
+}
+.id-preview strong{color:var(--gold-bright);letter-spacing:.06em}
+.inline-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.mini{
+  border:1px solid var(--line);
+  background:#141316;
+  color:var(--muted);
+  padding:7px 9px;
+  font-size:12px;
+  border-radius:7px;
+}
+.mini:hover{color:var(--ivory);border-color:var(--gold)}
+.form-actions{
+  position:sticky;
+  bottom:-20px;
+  background:linear-gradient(0deg,#101012 82%,rgba(16,16,18,0));
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  padding:18px 0 4px;
+  margin-top:4px;
+}
+.content-panel{padding:18px;min-height:700px}
+.toolbar{
+  display:grid;
+  grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(135px,1fr));
+  gap:9px;
+  margin-bottom:12px;
+}
+.actionbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+  border-bottom:1px solid var(--line);
+  padding-bottom:15px;margin-bottom:0;
+}
+.actionset{display:flex;gap:5px;flex-wrap:wrap}
+.count-display{font-size:12px;color:var(--muted)}
+.table-wrap{
+  margin-top:14px;
+  overflow:auto;
+  min-height:410px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0b0b0d;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+  min-width:1040px;
+}
+th{
+  position:sticky;top:0;z-index:2;
+  background:#141316;
+  color:var(--gold);
+  font-family:Cinzel,Georgia,serif;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  font-size:10px;
+  font-weight:600;
+  padding:13px 10px;
+  text-align:left;
+  border-bottom:1px solid var(--line-bright);
+}
+td{
+  padding:11px 10px;
+  border-bottom:1px solid #201e1c;
+  color:#cec5b9;
+  vertical-align:middle;
+}
+tr:hover td{background:rgba(186,151,96,.035)}
+.asset-id{
+  color:var(--gold-bright);
+  font-weight:600;
+  letter-spacing:.07em;
+  white-space:nowrap;
+}
+.asset-name{font-weight:600;color:var(--ivory);font-size:13px}
+.subtext{color:var(--muted);font-size:11px;display:block;margin-top:4px}
+.badge{
+  display:inline-flex;align-items:center;
+  border:1px solid #39322d;border-radius:99px;padding:4px 8px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d5cbbd;
+}
+.status-Planned{background:#252424}
+.status-Built{background:rgba(83,106,130,.25);border-color:#384a5d}
+.status-Installed{background:rgba(186,151,96,.18);border-color:#59482e}
+.status-Tested{background:rgba(85,113,94,.23);border-color:#3b5243}
+.status-Retired{background:rgba(129,37,31,.18);border-color:#55201d}
+.critical-Critical{color:#f0b8af;border-color:#74322d;background:var(--red-soft)}
+.critical-Important{color:var(--gold-bright)}
+.qr-thumb{
+  width:48px;height:48px;padding:3px;background:#fff;border-radius:6px;display:block;
+}
+.table-actions{display:flex;gap:4px;white-space:nowrap}
+.table-actions button{
+  border:1px solid var(--line);background:#151416;color:var(--muted);
+  border-radius:7px;padding:6px 8px;font-size:11px;
+}
+.table-actions button:hover{border-color:var(--gold);color:var(--ivory)}
+.empty{
+  text-align:center;padding:64px 20px;color:var(--muted);
+}
+.empty strong{
+  display:block;color:var(--ivory);font-family:Cinzel,serif;
+  font-size:18px;letter-spacing:.07em;font-weight:500;margin-bottom:9px;
+}
+.docs-note{
+  margin-top:15px;padding:12px 14px;background:#0b0b0d;border:1px solid var(--line);
+  border-radius:10px;color:var(--muted);font-size:12px;line-height:1.6;
+}
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.74);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;z-index:20;padding:20px;
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  width:min(560px,100%);
+  background:#111114;border:1px solid var(--line-bright);border-radius:18px;
+  box-shadow:0 24px 80px rgba(0,0,0,.72);padding:23px;
+}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px;
+}
+.modal-head h3{
+  margin:0;font-family:Cinzel,Georgia,serif;font-weight:500;color:var(--ivory);
+  font-size:17px;letter-spacing:.08em;
+}
+.close-x{
+  border:1px solid var(--line);background:none;color:var(--muted);
+  border-radius:50%;height:32px;width:32px;
+}
+.label-preview{
+  border:1px solid #d3c9b9;background:#faf8f3;color:#151211;
+  border-radius:7px;padding:18px;display:grid;grid-template-columns:1fr 128px;
+  gap:12px;align-items:center;min-height:172px;
+}
+.label-preview img{width:124px;height:124px}
+.label-brand{font-family:Cinzel,Georgia,serif;color:#7e261f;letter-spacing:.13em;font-size:12px;font-weight:700}
+.label-preview h4{margin:10px 0 4px;font-size:15px;color:#111}
+.label-preview .print-id{font-family:monospace;font-weight:bold;font-size:15px;color:#281b14;margin:7px 0}
+.label-preview p{margin:3px 0;color:#514941;font-size:11px}
+.modal-actions{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap}
+.labelSheet{display:none}
+.qrLabel{
+  width:2.8in;height:1.45in;border:1px solid #222;background:#fff;color:#111;
+  padding:.12in;display:inline-grid;grid-template-columns:1fr .9in;gap:.08in;
+  margin:.08in;vertical-align:top;overflow:hidden;
+}
+.qrLabel img{width:.84in;height:.84in;justify-self:end;margin-top:.08in}
+.qrTitle{font-family:Georgia,serif;color:#7e261f;text-transform:uppercase;letter-spacing:.11em;font-size:9px;font-weight:bold}
+.qrId{font-family:monospace;font-size:10px;font-weight:bold;margin-top:5px}
+.qrSmall{font-size:8px;margin-top:3px}
+@media print{
+  body *{visibility:hidden!important}
+  #labelSheet,#labelSheet *{visibility:visible!important}
+  #labelSheet{display:block;position:absolute;left:0;top:0;background:white;width:100%}
+}
+@media(max-width:1220px){
+  .hero{grid-template-columns:1fr;gap:5px}
+  .hero-copy{padding-bottom:18px}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .workbench{grid-template-columns:1fr}
+  .form-panel{position:static;max-height:none}
+}
+@media(max-width:720px){
+  .shell{padding:0 14px 22px}
+  .logo{height:auto}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .toolbar,.row-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <img class="logo" src="assets/hollownet-logo.png" alt="HollowNet — House in the Hollow Automation Control">
+    <div class="hero-copy">
+      <div class="eyebrow">Asset Registry & Technical Control Map</div>
+      <h1>Attraction Systems Planner</h1>
+      <p>Catalog effects, controllers, technical zones, QR-tagged assets, documentation, and maintenance records in one refined workspace.</p>
+      <div class="hero-actions">
+        <button class="btn primary" onclick="scrollToForm()">＋ Add Asset</button>
+        <button class="btn" onclick="printLabels()">Print QR Labels</button>
+        <button class="btn quiet" onclick="exportJSON()">Export Backup</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="topline">
+    <div>
+      <h2>Asset Dashboard</h2>
+      <div class="small">House in the Hollow automation inventory and service documentation</div>
+    </div>
+    <div class="storage-mark">Saved locally in this browser</div>
+  </div>
+
+  <section class="stats" aria-label="asset summary">
+    <div class="stat gold"><b id="totalCount">0</b><span>Total Assets</span></div>
+    <div class="stat"><b id="plannedCount">0</b><span>Planned</span></div>
+    <div class="stat"><b id="builtCount">0</b><span>Built</span></div>
+    <div class="stat"><b id="installedCount">0</b><span>Installed</span></div>
+    <div class="stat"><b id="testedCount">0</b><span>Tested</span></div>
+    <div class="stat"><b id="criticalCount">0</b><span>Critical</span></div>
+  </section>
+
+  <main class="workbench">
+    <aside class="panel form-panel" id="assetFormPanel">
+      <div class="panel-head">
+        <h3 id="formTitle">Register New Asset</h3>
+        <div class="small">Create an asset identity, location and technical record.</div>
+      </div>
+
+      <div class="form-section">Identity</div>
+      <div class="field">
+        <label for="assetId">Asset ID</label>
+        <input id="assetId" placeholder="Auto-assigned on save">
+        <div class="inline-buttons">
+          <button class="mini" onclick="generateIdNow()">Generate ID</button>
+          <button class="mini" onclick="suggestFolderName()">Build Folder Name</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="name">Effect / Asset Name</label>
+        <input id="name" placeholder="Fog Message Glass">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="type">Asset Type</label>
+          <select id="type" onchange="suggestIdPreview()">
+            <option>Animatronic</option><option>Lighting</option><option>Projection</option>
+            <option>Audio</option><option>Fog / Mist</option><option>Sensor</option>
+            <option>Pneumatic</option><option>Motor</option><option>Interactive</option>
+            <option>Utility / Power</option><option>Scene Controller</option>
+            <option>Actor Trigger</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status">
+            <option>Planned</option><option>Built</option><option>Installed</option>
+            <option>Tested</option><option>Retired</option>
+          </select>
+        </div>
+      </div>
+      <div class="id-preview">Next available ID: <strong id="idPreview">---</strong></div>
+
+      <div class="form-section">Placement</div>
+      <div class="row-2">
+        <div class="field">
+          <label for="zone">Technical Zone</label>
+          <select id="zone">
+            <option>Exterior Grounds</option><option>Front House</option>
+            <option>Upper House</option><option>Basement</option>
+            <option>Operations</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="criticality">Criticality</label>
+          <select id="criticality">
+            <option>Normal</option><option>Critical</option><option>Important</option>
+            <option>Decorative</option><option>Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="room">Room / Scene Area</label>
+        <input id="room" placeholder="Bridge, Library, Furnace Room">
+      </div>
+
+      <div class="form-section">Controller & Operation</div>
+      <div class="row-2">
+        <div class="field">
+          <label for="controllerId">Controller ID</label>
+          <input id="controllerId" placeholder="HNC-26-ESP-001">
+        </div>
+        <div class="field">
+          <label for="controller">Controller Type</label>
+          <input id="controller" placeholder="ESP32 / Pi / BooBox">
+        </div>
+      </div>
+      <div class="field">
+        <label for="trigger">Trigger</label>
+        <input id="trigger" placeholder="Motion, actor button, timer, hub">
+      </div>
+      <div class="field">
+        <label for="outputs">Outputs</label>
+        <input id="outputs" placeholder="Fogger, fan, LED, motor, audio">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="power">Power</label>
+          <input id="power" placeholder="24V / 120V / Battery">
+        </div>
+        <div class="field">
+          <label for="network">Network</label>
+          <input id="network" placeholder="WiFi / Ethernet / DMX">
+        </div>
+      </div>
+      <div class="field">
+        <label for="reportsTo">Reports To</label>
+        <select id="reportsTo">
+          <option>Main Hub</option><option>Zone Controller</option>
+          <option>Room Controller</option><option>Local Only</option>
+        </select>
+      </div>
+
+      <details>
+        <summary class="form-section" style="cursor:pointer">Documentation & Service</summary>
+        <div class="field">
+          <label for="assetFolder">Asset Folder Path or URL</label>
+          <input id="assetFolder" placeholder="HollowNet Assets/HNA-26-FOG-001 - Fog Message Glass">
+          <div class="inline-buttons">
+            <button class="mini" onclick="copyFolderName()">Copy Folder Path</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="photoLinks">Photos</label>
+          <textarea id="photoLinks" placeholder="Links or filenames, one per line"></textarea>
+        </div>
+        <div class="field">
+          <label for="videoLinks">Video</label>
+          <textarea id="videoLinks" placeholder="Test video or reference footage"></textarea>
+        </div>
+        <div class="field">
+          <label for="wiringLinks">Wiring / Diagrams</label>
+          <textarea id="wiringLinks" placeholder="Wiring plans, schematics or photos"></textarea>
+        </div>
+        <div class="field">
+          <label for="firmwareLinks">Firmware / Code</label>
+          <textarea id="firmwareLinks" placeholder="Sketch, repo or Pi script"></textarea>
+        </div>
+        <div class="field">
+          <label for="manualLinks">Manuals / References</label>
+          <textarea id="manualLinks" placeholder="Datasheets, manuals, parts lists"></textarea>
+        </div>
+        <div class="field">
+          <label for="maintenanceLog">Maintenance Log</label>
+          <textarea id="maintenanceLog" rows="4" placeholder="2026-09-15 — Installed and tested"></textarea>
+        </div>
+      </details>
+
+      <div class="field" style="margin-top:16px">
+        <label for="notes">Notes</label>
+        <textarea id="notes" rows="4" placeholder="Build notes, problems, upgrade plans..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" id="saveBtn" onclick="saveItem()">Add Asset</button>
+        <button class="btn" id="cancelBtn" onclick="cancelEdit()" style="display:none">Cancel Edit</button>
+        <button class="btn quiet" onclick="clearForm()">Clear</button>
+      </div>
+    </aside>
+
+    <section class="panel content-panel">
+      <div class="toolbar">
+        <input id="search" oninput="render()" placeholder="Search assets, rooms, controllers or notes...">
+        <select id="filterZone" onchange="render()">
+          <option value="">All Zones</option><option>Exterior Grounds</option>
+          <option>Front House</option><option>Upper House</option>
+          <option>Basement</option><option>Operations</option><option>Other</option>
+        </select>
+        <select id="filterStatus" onchange="render()">
+          <option value="">All Statuses</option><option>Planned</option><option>Built</option>
+          <option>Installed</option><option>Tested</option><option>Retired</option>
+        </select>
+        <select id="sortBy" onchange="render()">
+          <option value="zone">Sort: Zone</option><option value="room">Sort: Room</option>
+          <option value="name">Sort: Name</option><option value="assetId">Sort: Asset ID</option>
+          <option value="type">Sort: Type</option><option value="status">Sort: Status</option>
+        </select>
+      </div>
+
+      <div class="actionbar">
+        <div class="actionset">
+          <button class="btn" onclick="exportJSON()">Export JSON</button>
+          <button class="btn" onclick="exportCSV()">Export CSV</button>
+          <button class="btn" onclick="importJSON()">Import</button>
+          <button class="btn" onclick="printLabels()">Print Labels</button>
+          <button class="btn" onclick="exportAllReadmes()">Export READMEs</button>
+          <button class="btn danger" onclick="clearAll()">Clear All</button>
+          <input type="file" id="importFile" accept=".json" hidden onchange="handleImport(event)">
+        </div>
+        <div class="count-display"><span id="shownCount">0</span> records shown</div>
+      </div>
+
+      <div class="table-wrap">
+        <table aria-label="HollowNet inventory">
+          <thead>
+            <tr>
+              <th>Asset ID</th><th>Asset</th><th>Location</th><th>Type</th>
+              <th>Status</th><th>Controller</th><th>QR</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="emptyState">
+          <strong>No Assets Registered</strong>
+          Add your first effect or controller to begin the HollowNet technical map.
+        </div>
+      </div>
+
+      <div class="docs-note">
+        <strong style="color:var(--gold-bright)">Documentation structure:</strong>
+        each record can generate a README and a named asset folder reference for photos, video, wiring, firmware, manuals and service notes. QR labels encode the permanent Asset ID.
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="qrModal" onclick="modalBackdropClose(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>QR Asset Label</h3>
+      <button class="close-x" onclick="closeQRModal()">×</button>
+    </div>
+    <div class="label-preview" id="singleLabelPreview"></div>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="printCurrentLabel()">Print This Label</button>
+      <button class="btn" onclick="downloadCurrentReadme()">Download README</button>
+      <button class="btn quiet" onclick="closeQRModal()">Close</button>
+    </div>
+  </div>
+</div>
+<div id="labelSheet" class="labelSheet"></div>
+
+<script>
+let items = JSON.parse(localStorage.getItem("hollownetPlannerItems") || "[]");
+let editingIndex = null;
+let selectedQRIndex = null;
+
+const TYPE_CODES = {
+  "Animatronic":"ANM","Lighting":"LGT","Projection":"PRJ","Audio":"AUD",
+  "Fog / Mist":"FOG","Sensor":"SNS","Pneumatic":"PNU","Motor":"MTR",
+  "Interactive":"INT","Utility / Power":"UTL","Scene Controller":"SCN",
+  "Actor Trigger":"ACT","Other":"OTH"
+};
+
+function el(id){ return document.getElementById(id); }
+function val(id){ return el(id).value.trim(); }
+function setVal(id,value){ el(id).value = value || ""; }
+function yearCode(){ return String(new Date().getFullYear()).slice(-2); }
+function typeCode(type){ return TYPE_CODES[type] || "OTH"; }
+function safeName(str){
+  return String(str || "").replace(/[\/\\:*?"<>|]/g,"").replace(/\s+/g," ").trim();
+}
+function esc(str){
+  return String(str || "").replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-Z0-9-_]/g,""); }
+
+function nextAssetId(type){
+  const prefix = `HNA-${yearCode()}-${typeCode(type)}-`;
+  let max = 0;
+  items.forEach(item => {
+    if((item.assetId || "").startsWith(prefix)){
+      const number = parseInt(item.assetId.split("-").pop(),10);
+      if(!isNaN(number) && number > max) max = number;
+    }
+  });
+  return prefix + String(max + 1).padStart(3,"0");
+}
+function generateIdNow(){
+  if(!val("assetId")) setVal("assetId", nextAssetId(val("type")));
+  suggestIdPreview();
+}
+function suggestIdPreview(){ el("idPreview").textContent = nextAssetId(val("type")); }
+function suggestedFolder(id,name){ return `HollowNet Assets/${id} - ${safeName(name || "Unnamed Asset")}`; }
+function suggestFolderName(){
+  generateIdNow();
+  setVal("assetFolder", suggestedFolder(val("assetId"), val("name")));
+}
+async function copyFolderName(){
+  if(!val("assetFolder")) suggestFolderName();
+  try{
+    await navigator.clipboard.writeText(val("assetFolder"));
+    notify("Folder path copied.");
+  }catch{
+    prompt("Copy this folder path:", val("assetFolder"));
+  }
+}
+function scrollToForm(){ el("assetFormPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
+
+function getFormItem(){
+  const assetId = val("assetId") || nextAssetId(val("type"));
+  return {
+    assetId, name:val("name"), zone:val("zone"), room:val("room"), type:val("type"),
+    status:val("status"), criticality:val("criticality"), controllerId:val("controllerId"),
+    controller:val("controller"), trigger:val("trigger"), outputs:val("outputs"),
+    power:val("power"), network:val("network"), reportsTo:val("reportsTo"),
+    assetFolder:val("assetFolder") || suggestedFolder(assetId,val("name")),
+    photoLinks:val("photoLinks"), videoLinks:val("videoLinks"), wiringLinks:val("wiringLinks"),
+    firmwareLinks:val("firmwareLinks"), manualLinks:val("manualLinks"),
+    maintenanceLog:val("maintenanceLog"), notes:val("notes"),
+    updatedAt:new Date().toISOString()
+  };
+}
+function saveItem(){
+  const item = getFormItem();
+  if(!item.name){ alert("Add an asset name first."); return; }
+  const duplicateId = items.findIndex((record,index) => record.assetId === item.assetId && index !== editingIndex);
+  if(duplicateId !== -1){ alert("That Asset ID is already in use."); return; }
+  if(editingIndex !== null){
+    item.createdAt = items[editingIndex].createdAt || new Date().toISOString();
+    items[editingIndex] = item;
+    notify("Asset updated.");
+  } else {
+    item.createdAt = new Date().toISOString();
+    items.push(item);
+    notify("Asset registered.");
+  }
+  persist();
+  cancelEdit();
+}
+function editItem(realIndex){
+  const item = items[realIndex];
+  editingIndex = realIndex;
+  ["assetId","name","zone","room","type","status","criticality","controllerId","controller",
+   "trigger","outputs","power","network","reportsTo","assetFolder","photoLinks","videoLinks",
+   "wiringLinks","firmwareLinks","manualLinks","maintenanceLog","notes"].forEach(id => setVal(id,item[id]));
+  el("formTitle").textContent = "Edit Asset Record";
+  el("saveBtn").textContent = "Save Changes";
+  el("cancelBtn").style.display = "inline-flex";
+  el("assetFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function cancelEdit(){
+  editingIndex = null;
+  clearForm();
+  el("formTitle").textContent = "Register New Asset";
+  el("saveBtn").textContent = "Add Asset";
+  el("cancelBtn").style.display = "none";
+  suggestIdPreview();
+}
+function clearForm(){
+  ["assetId","name","room","controllerId","controller","trigger","outputs","power","network",
+   "assetFolder","photoLinks","videoLinks","wiringLinks","firmwareLinks","manualLinks",
+   "maintenanceLog","notes"].forEach(id => setVal(id,""));
+  setVal("type","Animatronic"); setVal("zone","Exterior Grounds"); setVal("status","Planned");
+  setVal("criticality","Normal"); setVal("reportsTo","Main Hub");
+}
+function deleteItem(realIndex){
+  if(confirm(`Delete ${items[realIndex].name}?`)){
+    items.splice(realIndex,1); persist(); notify("Asset removed.");
+  }
+}
+function duplicateItem(realIndex){
+  const copy = JSON.parse(JSON.stringify(items[realIndex]));
+  copy.name += " Copy";
+  copy.assetId = nextAssetId(copy.type);
+  copy.assetFolder = suggestedFolder(copy.assetId,copy.name);
+  copy.createdAt = copy.updatedAt = new Date().toISOString();
+  items.push(copy); persist(); notify("Duplicate asset created.");
+}
+function persist(){
+  localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
+  render();
+}
+
+function filteredItems(){
+  const term = val("search").toLowerCase();
+  const zone = val("filterZone");
+  const status = val("filterStatus");
+  const sort = val("sortBy");
+  let list = items.map((item,realIndex) => ({item,realIndex}));
+  if(term) list = list.filter(({item}) => JSON.stringify(item).toLowerCase().includes(term));
+  if(zone) list = list.filter(({item}) => item.zone === zone);
+  if(status) list = list.filter(({item}) => item.status === status);
+  list.sort((a,b) => String(a.item[sort] || "").localeCompare(String(b.item[sort] || "")));
+  return list;
+}
+function qrURL(text,size=160){
+  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=0&data=${encodeURIComponent(text)}`;
+}
+function render(){
+  const tbody = el("tbody");
+  tbody.innerHTML = "";
+  const list = filteredItems();
+  list.forEach(({item,realIndex}) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td><span class="asset-id">${esc(item.assetId)}</span></td>
+      <td><span class="asset-name">${esc(item.name)}</span><span class="subtext"><span class="badge critical-${cls(item.criticality)}">${esc(item.criticality)}</span></span></td>
+      <td>${esc(item.zone)}<span class="subtext">${esc(item.room)}</span></td>
+      <td>${esc(item.type)}</td>
+      <td><span class="badge status-${cls(item.status)}">${esc(item.status)}</span></td>
+      <td>${esc(item.controller || "—")}<span class="subtext">${esc(item.controllerId)}</span></td>
+      <td><img class="qr-thumb" src="${qrURL(item.assetId,96)}" alt="QR for ${esc(item.assetId)}" onclick="openQRModal(${realIndex})"></td>
+      <td><div class="table-actions">
+        <button onclick="editItem(${realIndex})">Edit</button>
+        <button onclick="openQRModal(${realIndex})">Label</button>
+        <button onclick="downloadReadme(${realIndex})">README</button>
+        <button onclick="duplicateItem(${realIndex})">Copy</button>
+        <button onclick="deleteItem(${realIndex})">Delete</button>
+      </div></td>`;
+    tbody.appendChild(row);
+  });
+  el("emptyState").style.display = list.length ? "none" : "block";
+  el("shownCount").textContent = list.length;
+  el("totalCount").textContent = items.length;
+  el("plannedCount").textContent = countStatus("Planned");
+  el("builtCount").textContent = countStatus("Built");
+  el("installedCount").textContent = countStatus("Installed");
+  el("testedCount").textContent = countStatus("Tested");
+  el("criticalCount").textContent = items.filter(item => item.criticality === "Critical").length;
+  suggestIdPreview();
+}
+function countStatus(status){ return items.filter(item => item.status === status).length; }
+
+function labelMarkup(item, preview=false){
+  return `
+    <div>
+      <div class="${preview ? "label-brand" : "qrTitle"}">HollowNet Asset</div>
+      ${preview ? `<h4>${esc(item.name)}</h4>` : `<div class="qrSmall">${esc(item.name)}</div>`}
+      <div class="${preview ? "print-id" : "qrId"}">${esc(item.assetId)}</div>
+      <p class="${preview ? "" : "qrSmall"}">${esc(item.zone)} · ${esc(item.room)}</p>
+      <p class="${preview ? "" : "qrSmall"}">${esc(item.type)}</p>
+    </div>
+    <img src="${qrURL(item.assetId,220)}" alt="QR Code">`;
+}
+function openQRModal(realIndex){
+  selectedQRIndex = realIndex;
+  el("singleLabelPreview").innerHTML = labelMarkup(items[realIndex],true);
+  el("qrModal").classList.add("open");
+}
+function closeQRModal(){ el("qrModal").classList.remove("open"); selectedQRIndex = null; }
+function modalBackdropClose(event){ if(event.target.id === "qrModal") closeQRModal(); }
+function printLabels(list = filteredItems().map(({item}) => item)){
+  if(!list.length){ alert("There are no matching labels to print."); return; }
+  const sheet = el("labelSheet");
+  sheet.innerHTML = list.map(item => `<div class="qrLabel">${labelMarkup(item,false)}</div>`).join("");
+  window.print();
+}
+function printCurrentLabel(){
+  if(selectedQRIndex === null) return;
+  printLabels([items[selectedQRIndex]]);
+}
+function downloadCurrentReadme(){ if(selectedQRIndex !== null) downloadReadme(selectedQRIndex); }
+
+function makeReadme(item){
+return `# ${item.name || "Unnamed Asset"}
+
+## HollowNet Asset Record
+- Asset ID: ${item.assetId || ""}
+- Type: ${item.type || ""}
+- Status: ${item.status || ""}
+- Criticality: ${item.criticality || ""}
+- Zone: ${item.zone || ""}
+- Room / Area: ${item.room || ""}
+- Asset Folder: ${item.assetFolder || ""}
+
+## Control System
+- Controller ID: ${item.controllerId || ""}
+- Current Controller: ${item.controller || ""}
+- Reports To: ${item.reportsTo || ""}
+- Trigger: ${item.trigger || ""}
+- Outputs: ${item.outputs || ""}
+- Power: ${item.power || ""}
+- Network / Communication: ${item.network || ""}
+
+## Documentation Links
+
+### Photos
+${item.photoLinks || ""}
+
+### Videos
+${item.videoLinks || ""}
+
+### Wiring / Diagrams
+${item.wiringLinks || ""}
+
+### Firmware / Code
+${item.firmwareLinks || ""}
+
+### Manuals / Reference Documents
+${item.manualLinks || ""}
+
+## Maintenance Log
+${item.maintenanceLog || ""}
+
+## Notes
+${item.notes || ""}
+
+## Suggested Folder Structure
+
+\`\`\`
+${item.assetFolder || suggestedFolder(item.assetId,item.name)}/
+├── README.md
+├── photos/
+├── video/
+├── wiring/
+├── firmware/
+├── manuals/
+└── service-notes/
+\`\`\`
+
+Created: ${item.createdAt || ""}
+Updated: ${item.updatedAt || ""}
+`;
+}
+function downloadReadme(realIndex){
+  const item = items[realIndex];
+  download(`${safeName(item.assetId)}-${safeName(item.name)}-README.md`, makeReadme(item), "text/markdown");
+}
+function exportAllReadmes(){
+  if(!items.length){ alert("There are no asset records to export."); return; }
+  download("hollownet_all_asset_readmes.md", items.map(makeReadme).join("\n\n---\n\n"), "text/markdown");
+}
+function exportJSON(){ download("hollownet_planner_backup.json", JSON.stringify(items,null,2), "application/json"); }
+function exportCSV(){
+  const headers = ["assetId","name","zone","room","type","status","criticality","controllerId",
+    "controller","trigger","outputs","power","network","reportsTo","assetFolder","photoLinks",
+    "videoLinks","wiringLinks","firmwareLinks","manualLinks","maintenanceLog","notes","createdAt","updatedAt"];
+  const rows = items.map(item => headers.map(h => `"${String(item[h] || "").replaceAll('"','""')}"`).join(","));
+  download("hollownet_planner_export.csv", headers.join(",") + "\n" + rows.join("\n"), "text/csv");
+}
+function importJSON(){ el("importFile").click(); }
+function handleImport(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const incoming = JSON.parse(e.target.result);
+      if(!Array.isArray(incoming)) throw new Error();
+      if(confirm("Replace current planner data with this imported backup?")){
+        items = incoming; persist(); notify("Backup imported.");
+      }
+    }catch{ alert("This does not appear to be a valid HollowNet JSON export."); }
+    event.target.value = "";
+  };
+  reader.readAsText(file);
+}
+function clearAll(){
+  if(confirm("Clear all HollowNet asset records from this browser? This cannot be undone unless you exported a backup.")){
+    items=[]; persist(); cancelEdit(); notify("All asset records cleared.");
+  }
+}
+function download(filename, text, mime="text/plain"){
+  const url = URL.createObjectURL(new Blob([text],{type:mime}));
+  const link = document.createElement("a");
+  link.href=url; link.download=filename; link.click();
+  setTimeout(() => URL.revokeObjectURL(url),500);
+}
+function notify(message){
+  const existing = document.querySelector(".toast");
+  if(existing) existing.remove();
+  const toast=document.createElement("div");
+  toast.className="toast";
+  toast.textContent=message;
+  toast.style.cssText="position:fixed;right:22px;bottom:22px;background:#171417;border:1px solid #483a30;color:#eee3cf;padding:12px 15px;border-radius:10px;z-index:40;box-shadow:0 12px 38px rgba(0,0,0,.45);font-size:13px";
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2400);
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeQRModal(); });
+render();
+</script>
+</body>
+</html>
