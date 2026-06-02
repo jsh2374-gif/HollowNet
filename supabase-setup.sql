@@ -69,3 +69,15 @@ $$;
 
 revoke all on function public.sync_hollownet_workspace(text, text, jsonb) from public;
 grant execute on function public.sync_hollownet_workspace(text, text, jsonb) to anon, authenticated;
+
+create or replace function public.load_hollownet_workspace(p_workspace_id text)
+returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select items from public.hollownet_workspaces where workspace_id = p_workspace_id;
+$$;
+
+revoke all on function public.load_hollownet_workspace(text) from public;
+grant execute on function public.load_hollownet_workspace(text) to anon, authenticated;

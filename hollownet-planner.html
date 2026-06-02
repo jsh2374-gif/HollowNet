@@ -741,36 +741,22 @@ tr:hover td{background:rgba(186,151,96,.035)}
       <button class="close-x" onclick="closeCloudModal()">×</button>
     </div>
     <p class="cloud-help">
-      Connect this browser to your Supabase project and HollowNet workspace. Use the same settings
-      in another browser to share asset records.
+      Shared assets load automatically in every browser. Enter the private editing password once
+      on browsers that should be allowed to add, update or delete records.
     </p>
     <div class="field">
-      <label for="cloudUrl">Supabase Project URL</label>
-      <input id="cloudUrl" placeholder="https://your-project.supabase.co">
-    </div>
-    <div class="field">
-      <label for="cloudKey">Supabase Publishable Key</label>
-      <input id="cloudKey" type="password" placeholder="sb_publishable_...">
-    </div>
-    <div class="row-2">
-      <div class="field">
-        <label for="cloudWorkspace">Workspace ID</label>
-        <input id="cloudWorkspace" placeholder="house-in-the-hollow">
-      </div>
-      <div class="field">
-        <label for="cloudAccessCode">Workspace Access Code</label>
-        <input id="cloudAccessCode" type="password" placeholder="Use the same private code everywhere">
-      </div>
+      <label for="cloudAccessCode">Editing Password</label>
+      <input id="cloudAccessCode" type="password" placeholder="At least 12 characters">
     </div>
     <div class="modal-actions">
-      <button class="btn primary" onclick="saveCloudSettings()">Save Connection</button>
+      <button class="btn primary" onclick="saveEditingPassword()">Save Editing Password</button>
       <button class="btn" onclick="pushCloud()">Push Local Assets</button>
-      <button class="btn" onclick="pullCloud()">Pull Cloud Assets</button>
-      <button class="btn quiet" onclick="disconnectCloud()">Disconnect</button>
+      <button class="btn" onclick="pullCloud()">Reload Shared Assets</button>
+      <button class="btn quiet" onclick="forgetEditingPassword()">Forget Password</button>
     </div>
     <p class="cloud-note">
-      <strong>First-time setup:</strong> run <code>supabase-setup.sql</code> once in your Supabase SQL editor.
-      The publishable key is intended for browser apps. Do not use a secret or service-role key here.
+      <strong>Viewing is automatic.</strong> The editing password is remembered only in this browser.
+      Use the same password on each browser that should be allowed to make changes.
     </p>
   </div>
 </div>
@@ -779,8 +765,11 @@ tr:hover td{background:rgba(186,151,96,.035)}
 let items = JSON.parse(localStorage.getItem("hollownetPlannerItems") || "[]");
 let editingIndex = null;
 let selectedQRIndex = null;
-const CLOUD_CONFIG_KEY = "hollownetCloudConfig";
-let cloudConfig = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "null");
+const CLOUD_URL = "https://xazotpslpilfiyizykhu.supabase.co";
+const CLOUD_KEY = "sb_publishable_7_mRYNinmfatNPru7tyYsw_IzoJky3L";
+const CLOUD_WORKSPACE = "house-in-the-hollow";
+const EDIT_PASSWORD_KEY = "hollownetEditingPassword";
+let editingPassword = localStorage.getItem(EDIT_PASSWORD_KEY) || "";
 let cloudPushTimer = null;
 
 const TYPE_CODES = {
@@ -835,57 +824,54 @@ async function copyFolderName(){
   }
 }
 function scrollToForm(){ el("assetFormPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
-function cloudReady(){
-  return cloudConfig && cloudConfig.url && cloudConfig.key && cloudConfig.workspace && cloudConfig.accessCode;
-}
 function setStorageMark(message,state=""){
   el("storageMark").textContent = message;
   el("storageMark").className = `storage-mark${state ? ` ${state}` : ""}`;
 }
 function updateStorageMark(){
-  setStorageMark(cloudReady() ? "Cloud sync connected" : "Saved locally in this browser", cloudReady() ? "cloud" : "");
+  setStorageMark(editingPassword ? "Shared assets · editing unlocked" : "Shared assets · view only","cloud");
 }
 function openCloudModal(){
-  setVal("cloudUrl",cloudConfig?.url);
-  setVal("cloudKey",cloudConfig?.key);
-  setVal("cloudWorkspace",cloudConfig?.workspace);
-  setVal("cloudAccessCode",cloudConfig?.accessCode);
+  setVal("cloudAccessCode",editingPassword);
   el("cloudModal").classList.add("open");
 }
 function closeCloudModal(){ el("cloudModal").classList.remove("open"); }
 function cloudBackdropClose(event){ if(event.target.id === "cloudModal") closeCloudModal(); }
-function saveCloudSettings(){
-  cloudConfig = {
-    url:val("cloudUrl").replace(/\/+$/,""),
-    key:val("cloudKey"),
-    workspace:val("cloudWorkspace"),
-    accessCode:val("cloudAccessCode")
-  };
-  if(!cloudReady()){ alert("Add the Supabase URL, publishable key, workspace ID and access code."); return; }
-  localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(cloudConfig));
+function saveEditingPassword(){
+  editingPassword = val("cloudAccessCode");
+  if(editingPassword.length < 12){ alert("Use an editing password with at least 12 characters."); return; }
+  localStorage.setItem(EDIT_PASSWORD_KEY, editingPassword);
   updateStorageMark();
   closeCloudModal();
-  notify("Cloud connection saved. Push local assets or pull the cloud workspace.");
+  notify("Editing unlocked in this browser.");
 }
-function disconnectCloud(){
-  if(!confirm("Disconnect this browser from cloud sync? Your local asset records will stay here.")) return;
-  cloudConfig = null;
-  localStorage.removeItem(CLOUD_CONFIG_KEY);
+function forgetEditingPassword(){
+  editingPassword = "";
+  localStorage.removeItem(EDIT_PASSWORD_KEY);
   updateStorageMark();
   closeCloudModal();
-  notify("Cloud sync disconnected. Local records are unchanged.");
+  notify("Editing locked. Shared assets remain visible.");
 }
-async function cloudRequest(nextItems){
-  if(!cloudReady()){ openCloudModal(); throw new Error("Add cloud connection settings first."); }
+function requireEditingPassword(){
+  if(editingPassword) return true;
+  openCloudModal();
+  notify("Enter the editing password to make changes.");
+  return false;
+}
+async function cloudRequest(nextItems=null){
+  const writing = nextItems !== null;
+  if(writing && !requireEditingPassword()) throw new Error("Enter the editing password first.");
   setStorageMark("Syncing cloud assets...","syncing");
-  const response = await fetch(`${cloudConfig.url}/rest/v1/rpc/sync_hollownet_workspace`,{
+  const functionName = writing ? "sync_hollownet_workspace" : "load_hollownet_workspace";
+  const payload = writing ? {
+    p_workspace_id:CLOUD_WORKSPACE,
+    p_access_code:editingPassword,
+    p_items:nextItems
+  } : {p_workspace_id:CLOUD_WORKSPACE};
+  const response = await fetch(`${CLOUD_URL}/rest/v1/rpc/${functionName}`,{
     method:"POST",
-    headers:{"apikey":cloudConfig.key,"Content-Type":"application/json"},
-    body:JSON.stringify({
-      p_workspace_id:cloudConfig.workspace,
-      p_access_code:cloudConfig.accessCode,
-      p_items:nextItems
-    })
+    headers:{"apikey":CLOUD_KEY,"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
   });
   if(!response.ok){
     const error = await response.json().catch(() => ({}));
@@ -896,7 +882,7 @@ async function cloudRequest(nextItems){
   return result;
 }
 function queueCloudPush(){
-  if(!cloudReady()) return;
+  if(!editingPassword) return;
   clearTimeout(cloudPushTimer);
   cloudPushTimer = setTimeout(async () => {
     try{ await cloudRequest(items); }
@@ -908,17 +894,33 @@ async function pushCloud(){
   catch(error){ setStorageMark("Cloud sync needs attention","error"); alert(error.message); }
 }
 async function pullCloud(){
-  if(items.length && !confirm("Replace this browser's local assets with the cloud workspace?")) return;
   try{
     const incoming = await cloudRequest(null);
+    if(incoming === null){ notify("Shared workspace is not initialized yet. Push local assets first."); return; }
     if(!Array.isArray(incoming)) throw new Error("The cloud workspace returned invalid asset data.");
     items = incoming;
     localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
     render();
     cancelEdit();
     closeCloudModal();
-    notify("Cloud assets pulled into this browser.");
+    notify("Shared assets loaded.");
   }catch(error){ setStorageMark("Cloud sync needs attention","error"); alert(error.message); }
+}
+async function loadSharedAssets(){
+  try{
+    const incoming = await cloudRequest(null);
+    if(incoming === null){
+      setStorageMark("Shared workspace ready · push local assets to initialize","cloud");
+      return;
+    }
+    if(!Array.isArray(incoming)) throw new Error("The shared workspace returned invalid asset data.");
+    items = incoming;
+    localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
+    render();
+  }catch(error){
+    setStorageMark("Shared assets unavailable · using local copy","error");
+    console.warn(error.message);
+  }
 }
 
 function getFormItem(){
@@ -936,6 +938,7 @@ function getFormItem(){
   };
 }
 function saveItem(){
+  if(!requireEditingPassword()) return;
   const item = getFormItem();
   if(!item.name){ alert("Add an asset name first."); return; }
   const duplicateId = items.findIndex((record,index) => record.assetId === item.assetId && index !== editingIndex);
@@ -953,6 +956,7 @@ function saveItem(){
   cancelEdit();
 }
 function editItem(realIndex){
+  if(!requireEditingPassword()) return;
   const item = items[realIndex];
   editingIndex = realIndex;
   ["assetId","name","zone","room","type","status","criticality","controllerId","controller",
@@ -985,11 +989,13 @@ function clearForm(){
   setVal("criticality","Normal"); setVal("reportsTo","Main Hub");
 }
 function deleteItem(realIndex){
+  if(!requireEditingPassword()) return;
   if(confirm(`Delete ${items[realIndex].name}?`)){
     items.splice(realIndex,1); persist(); notify("Asset removed.");
   }
 }
 function duplicateItem(realIndex){
+  if(!requireEditingPassword()) return;
   const copy = JSON.parse(JSON.stringify(items[realIndex]));
   copy.name += " Copy";
   copy.assetId = nextAssetId(copy.type);
@@ -1160,8 +1166,12 @@ function exportCSV(){
   const rows = items.map(item => headers.map(h => `"${String(item[h] || "").replaceAll('"','""')}"`).join(","));
   download("hollownet_planner_export.csv", headers.join(",") + "\n" + rows.join("\n"), "text/csv");
 }
-function importJSON(){ el("importFile").click(); }
+function importJSON(){
+  if(!requireEditingPassword()) return;
+  el("importFile").click();
+}
 function handleImport(event){
+  if(!requireEditingPassword()) return;
   const file = event.target.files[0];
   if(!file) return;
   const reader = new FileReader();
@@ -1178,6 +1188,7 @@ function handleImport(event){
   reader.readAsText(file);
 }
 function clearAll(){
+  if(!requireEditingPassword()) return;
   if(confirm("Clear all HollowNet asset records from this browser? This cannot be undone unless you exported a backup.")){
     items=[]; persist(); cancelEdit(); notify("All asset records cleared.");
   }
@@ -1203,6 +1214,7 @@ document.addEventListener("keydown", e => {
 });
 render();
 updateStorageMark();
+loadSharedAssets();
 </script>
 </body>
 </html>
