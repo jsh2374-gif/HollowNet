@@ -81,3 +81,28 @@ $$;
 
 revoke all on function public.load_hollownet_workspace(text) from public;
 grant execute on function public.load_hollownet_workspace(text) to anon, authenticated;
+
+-- Public media bucket for asset-page photos and videos.
+-- Uploads are insert-only, limited to this workspace folder, and capped at 50 MB.
+insert into storage.buckets(id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'hollownet-media',
+  'hollownet-media',
+  true,
+  52428800,
+  array['image/*', 'video/*']
+)
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "HollowNet media browser uploads" on storage.objects;
+create policy "HollowNet media browser uploads"
+on storage.objects
+for insert
+to anon, authenticated
+with check (
+  bucket_id = 'hollownet-media'
+  and (storage.foldername(name))[1] = 'house-in-the-hollow'
+);

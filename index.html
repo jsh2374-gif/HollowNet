@@ -286,6 +286,7 @@ textarea{resize:vertical;min-height:68px}
 }
 .editing-banner strong{color:var(--gold-bright)}
 .inline-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.upload-status{color:var(--muted);font-size:11px;line-height:1.5;margin-top:7px}
 .mini{
   border:1px solid var(--line);
   background:#141316;
@@ -676,6 +677,14 @@ body.asset-view .shell{display:none}
           <textarea id="videoLinks" placeholder="Test video or reference footage"></textarea>
         </div>
         <div class="field">
+          <label>Upload Media</label>
+          <div class="inline-buttons">
+            <label class="mini" for="mediaUpload" style="cursor:pointer">Upload Photos or Videos</label>
+            <input id="mediaUpload" type="file" accept="image/*,video/*" multiple hidden onchange="uploadMediaFiles(event)">
+          </div>
+          <div class="upload-status" id="mediaUploadStatus">Uploaded files are stored in Supabase and added to the fields above automatically.</div>
+        </div>
+        <div class="field">
           <label for="wiringLinks">Wiring / Diagrams</label>
           <textarea id="wiringLinks" placeholder="Wiring plans, schematics or photos"></textarea>
         </div>
@@ -823,6 +832,10 @@ body.asset-view .shell{display:none}
       <strong>Viewing is automatic.</strong> The editing password is remembered only in this browser.
       Use the same password on each browser that should be allowed to make changes.
     </p>
+    <p class="cloud-note">
+      <strong>Direct media uploads:</strong> run the latest <code>supabase-setup.sql</code> once in
+      your Supabase SQL editor to enable the image and video upload bucket.
+    </p>
   </div>
 </div>
 
@@ -834,6 +847,8 @@ let selectedDetailIndex = null;
 const CLOUD_URL = "https://xazotpslpilfiyizykhu.supabase.co";
 const CLOUD_KEY = "sb_publishable_7_mRYNinmfatNPru7tyYsw_IzoJky3L";
 const CLOUD_WORKSPACE = "house-in-the-hollow";
+const MEDIA_BUCKET = "hollownet-media";
+const MAX_MEDIA_BYTES = 50 * 1024 * 1024;
 const EDIT_PASSWORD_KEY = "hollownetEditingPassword";
 let editingPassword = localStorage.getItem(EDIT_PASSWORD_KEY) || "";
 let cloudPushTimer = null;
@@ -859,6 +874,13 @@ function esc(str){
 }
 function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-Z0-9-_]/g,""); }
 function lines(str){ return String(str || "").split("\n").map(line => line.trim()).filter(Boolean); }
+function appendLine(id,line){
+  const current = val(id);
+  setVal(id,current ? `${current}\n${line}` : line);
+}
+function safeFileName(name){
+  return String(name || "media-file").replace(/[^a-zA-Z0-9._-]+/g,"-").replace(/^-+|-+$/g,"") || "media-file";
+}
 function normalizeItem(item){
   return {...item, inspection:item.inspection || "Ready", controlledBy:item.controlledBy || "",
     affects:item.affects || "", serviceHistory:Array.isArray(item.serviceHistory) ? item.serviceHistory : []};
@@ -1009,6 +1031,48 @@ function queueCloudPush(){
     try{ await cloudRequest(items); }
     catch(error){ setStorageMark("Cloud sync needs attention","error"); notify(error.message); }
   },250);
+}
+async function uploadMediaFiles(event){
+  const input = event.target;
+  const files = [...input.files];
+  input.value = "";
+  if(!files.length) return;
+  if(!requireEditingPassword()) return;
+  const status = el("mediaUploadStatus");
+  const assetId = val("assetId") || nextAssetId(val("type"));
+  setVal("assetId",assetId);
+  const invalid = files.find(file => !/^(image|video)\//.test(file.type) || file.size > MAX_MEDIA_BYTES);
+  if(invalid){
+    alert(`${invalid.name} must be an image or video no larger than 50 MB.`);
+    return;
+  }
+  try{
+    status.textContent = "Checking editing password...";
+    await cloudRequest(items);
+    let uploaded = 0;
+    for(const file of files){
+      status.textContent = `Uploading ${uploaded + 1} of ${files.length}: ${file.name}`;
+      const path = `${CLOUD_WORKSPACE}/${assetId}/${Date.now()}-${uploaded}-${safeFileName(file.name)}`;
+      const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+      const response = await fetch(`${CLOUD_URL}/storage/v1/object/${MEDIA_BUCKET}/${encodedPath}`,{
+        method:"POST",
+        headers:{"apikey":CLOUD_KEY,"Authorization":`Bearer ${CLOUD_KEY}`,"Content-Type":file.type,"x-upsert":"false"},
+        body:file
+      });
+      if(!response.ok){
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || `Upload failed (${response.status}). Run the updated Supabase setup SQL first.`);
+      }
+      const publicURL = `${CLOUD_URL}/storage/v1/object/public/${MEDIA_BUCKET}/${encodedPath}`;
+      appendLine(file.type.startsWith("image/") ? "photoLinks" : "videoLinks",publicURL);
+      uploaded++;
+    }
+    status.textContent = `${uploaded} file${uploaded === 1 ? "" : "s"} uploaded. Save the asset to keep the new media links.`;
+    notify("Media uploaded. Save the asset record.");
+  }catch(error){
+    status.textContent = "Upload needs attention.";
+    alert(error.message);
+  }
 }
 async function pushCloud(){
   try{ await cloudRequest(items); closeCloudModal(); notify("Local assets pushed to the cloud."); }
