@@ -25,6 +25,14 @@ the editing password before it uploads a file, but the browser-facing Storage up
 necessarily public for this static GitHub Pages version. Use the bucket only for attraction media
 that is safe to publish, and monitor its storage usage in Supabase.
 
+## Build Planner
+
+`build-planner.html` is a companion page for projects that still need to be built.
+It tracks build stage, progress, target dates, notes and material checklists.
+
+Run the latest `supabase-setup.sql` again to add the shared build-list functions.
+It uses the same HollowNet editing password as the asset planner.
+
 ## How It Works
 
 - Shared assets load automatically when HollowNet opens.
@@ -34,3 +42,4 @@ that is safe to publish, and monitor its storage usage in Supabase.
 - The database hashes the workspace access code and blocks direct table reads and writes.
 - Direct uploads are restricted to image and video MIME types, a 50 MB per-file maximum and the
   HollowNet workspace folder. Existing files cannot be overwritten through the browser upload policy.
+- The build planner syncs separately from asset records, but shares the same workspace and editing password.

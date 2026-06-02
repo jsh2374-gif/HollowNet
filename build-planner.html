@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HollowNet Build Planner | House in the Hollow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#070708;--surface:#0e0e10;--line:#2a2421;--line-bright:#483a30;--ivory:#eee3cf;--text:#d9d0c3;--muted:#948b7d;--gold:#ba9760;--gold-bright:#dec089;--red:#81251f;--red-bright:#ad3a2e;--green:#55715e;--blue:#536a82;--shadow:0 20px 60px rgba(0,0,0,.44);--radius:18px}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% -8%,rgba(173,58,46,.1),transparent 34%),linear-gradient(180deg,#050506,var(--black) 260px,#09090b);color:var(--text);font-family:Inter,Arial,sans-serif;min-height:100vh}
+body::before{content:"";pointer-events:none;position:fixed;inset:0;opacity:.14;background-image:radial-gradient(rgba(238,227,207,.18) .7px,transparent .7px);background-size:4px 4px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:var(--gold-bright);text-decoration:none}a:hover{text-decoration:underline}
+.shell{position:relative;z-index:1;max-width:1640px;margin:0 auto;padding:0 28px 36px}
+.hero{min-height:220px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(340px,640px) 1fr;align-items:center;gap:46px;padding:22px 0 18px}
+.logo{width:min(100%,640px);height:190px;object-fit:contain;object-position:left center;filter:drop-shadow(0 16px 30px rgba(0,0,0,.65))}
+.eyebrow{font-family:Cinzel,Georgia,serif;color:var(--gold);letter-spacing:.24em;font-size:11px;text-transform:uppercase;margin-bottom:16px}
+h1,h2,h3{font-family:Cinzel,Georgia,serif;color:var(--ivory);font-weight:500;letter-spacing:.06em}
+h1{margin:0 0 12px;font-size:clamp(25px,2.1vw,34px)}p{color:var(--muted);line-height:1.65}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line-bright);background:#151311;color:var(--text);padding:11px 16px;border-radius:10px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:.18s ease}
+.btn:hover{border-color:var(--gold);color:var(--ivory);background:#1d1814;text-decoration:none}.btn.primary{background:linear-gradient(135deg,#6d201d,var(--red));border-color:#9a3d32;color:#f2e7d3}.btn.quiet{background:transparent;color:var(--muted)}.btn.danger:hover{border-color:var(--red-bright);color:#f0bbb2;background:rgba(129,37,31,.18)}
+.topline{margin:24px 0 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:22px}.small{color:var(--muted);font-size:12px;line-height:1.5}
+.storage-mark{display:flex;align-items:center;gap:8px;color:var(--gold-bright);font-size:12px}.storage-mark::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 9px rgba(85,113,94,.65)}.storage-mark.error{color:#f0b8af}.storage-mark.syncing{color:#a9b9c8}.storage-mark.error::before{background:var(--red-bright)}.storage-mark.syncing::before{background:var(--blue)}
+.stats{display:grid;grid-template-columns:repeat(6,minmax(115px,1fr));gap:12px;margin-bottom:18px}.stat{background:linear-gradient(145deg,rgba(20,20,23,.9),rgba(12,12,14,.96));border:1px solid var(--line);border-radius:15px;padding:16px 17px;min-height:90px;position:relative;overflow:hidden}.stat::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:linear-gradient(90deg,var(--red),transparent);opacity:.62}.stat.gold::after{background:linear-gradient(90deg,var(--gold),transparent)}.stat b{display:block;color:var(--ivory);font-size:30px;font-weight:500;font-family:Cinzel,Georgia,serif}.stat span{display:block;margin-top:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.15em;font-size:10px}
+.workbench{display:grid;grid-template-columns:410px minmax(600px,1fr);gap:18px;align-items:start}.panel{background:rgba(14,14,16,.93);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.form-panel{padding:0 18px 20px;position:sticky;top:16px;max-height:calc(100vh - 28px);overflow:auto}.content-panel{padding:18px;min-height:700px}.panel-head{position:sticky;top:0;z-index:3;background:linear-gradient(180deg,#101012 78%,rgba(16,16,18,0));padding:21px 0 18px}
+.form-section{font-family:Cinzel,Georgia,serif;font-size:11px;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin:17px 0 10px;padding:14px 0 0;border-top:1px solid var(--line)}.field{margin:0 0 11px}label{display:block;color:#a99d8c;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.11em;margin:0 0 6px}
+input,select,textarea{width:100%;color:var(--text);background:#09090b;border:1px solid #302b28;border-radius:9px;padding:10px 11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(186,151,96,.12)}input::placeholder,textarea::placeholder{color:#605a53}textarea{resize:vertical;min-height:68px}.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.inline-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.mini{border:1px solid var(--line);background:#141316;color:var(--muted);padding:7px 9px;font-size:12px;border-radius:7px}.mini:hover{color:var(--ivory);border-color:var(--gold)}.form-actions{position:sticky;bottom:-20px;background:linear-gradient(0deg,#101012 82%,rgba(16,16,18,0));display:flex;gap:7px;flex-wrap:wrap;padding:18px 0 4px;margin-top:4px}
+.toolbar{display:grid;grid-template-columns:minmax(190px,1.8fr) repeat(4,minmax(130px,1fr));gap:9px;margin-bottom:12px}.actionbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:15px}.actionset{display:flex;gap:5px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}.card{border:1px solid var(--line);border-radius:14px;background:#0b0b0d;padding:14px;position:relative}.card h3{margin:0 0 7px;font-size:16px}.card-meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}.badge{display:inline-flex;align-items:center;border:1px solid #39322d;border-radius:99px;padding:4px 8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d5cbbd}.priority-Critical,.stage-Blocked{color:#f0b8af;border-color:#74322d;background:rgba(129,37,31,.18)}.priority-High{color:#efd49e;border-color:#72532e;background:rgba(186,151,96,.14)}.stage-Done{color:#b9d5c1;border-color:#3b5243;background:rgba(85,113,94,.23)}.stage-Building{color:#c5d4e1;border-color:#384a5d;background:rgba(83,106,130,.25)}
+.progress-track{height:12px;background:#151316;border:1px solid var(--line);border-radius:99px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:0}.materials{margin:12px 0 0;border-top:1px solid var(--line);padding-top:10px}.mat-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;padding:6px 0;border-bottom:1px solid #1d1a18}.mat-row:last-child{border-bottom:0}.mat-row.done span{text-decoration:line-through;color:#6f675d}.card-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}.card-actions button{border:1px solid var(--line);background:#151416;color:var(--muted);border-radius:7px;padding:6px 8px;font-size:11px}.card-actions button:hover{border-color:var(--gold);color:var(--ivory)}
+.empty{text-align:center;padding:64px 20px;color:var(--muted)}.empty strong{display:block;color:var(--ivory);font-family:Cinzel,serif;font-size:18px;letter-spacing:.07em;font-weight:500;margin-bottom:9px}.hint{margin:12px 0;padding:10px 12px;border:1px solid #59482e;border-radius:10px;background:rgba(186,151,96,.08);color:#cbbda8;font-size:12px;line-height:1.55}.hint strong{color:var(--gold-bright)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.74);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#111114;border:1px solid var(--line-bright);border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.72);padding:23px}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px}.close-x{border:1px solid var(--line);background:none;color:var(--muted);border-radius:50%;height:32px;width:32px}
+@media(max-width:1220px){.hero,.workbench{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.form-panel{position:static;max-height:none}.toolbar{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.shell{padding:0 14px 22px}.logo{height:auto}.stats,.toolbar,.row-2{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <img class="logo" src="assets/hollownet-logo.png" alt="HollowNet — House in the Hollow Automation Control">
+    <div>
+      <div class="eyebrow">Build Queue & Materials</div>
+      <h1>Attraction Build Planner</h1>
+      <p>Track the things that still need to be built, check off materials, and keep progress visible before the house wakes up.</p>
+      <div class="hero-actions">
+        <button class="btn primary" onclick="scrollToForm()">＋ Add Build</button>
+        <a class="btn" href="index.html">Asset Planner</a>
+        <button class="btn quiet" onclick="exportJSON()">Export Backup</button>
+        <button class="btn quiet" onclick="openCloudModal()">Cloud Sync</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="topline">
+    <div>
+      <h2>Build Dashboard</h2>
+      <div class="small">Shared worklist for props, controllers, scenic pieces, wiring and final install prep</div>
+    </div>
+    <div class="storage-mark" id="storageMark">Saved locally in this browser</div>
+  </div>
+
+  <section class="stats" aria-label="build summary">
+    <div class="stat gold"><b id="totalCount">0</b><span>Total Builds</span></div>
+    <div class="stat"><b id="todoCount">0</b><span>Not Started</span></div>
+    <div class="stat"><b id="buildingCount">0</b><span>Building</span></div>
+    <div class="stat"><b id="blockedCount">0</b><span>Blocked</span></div>
+    <div class="stat"><b id="doneCount">0</b><span>Done</span></div>
+    <div class="stat"><b id="materialCount">0</b><span>Materials Left</span></div>
+  </section>
+
+  <main class="workbench">
+    <aside class="panel form-panel" id="buildFormPanel">
+      <div class="panel-head">
+        <h3 id="formTitle">Register Build Item</h3>
+        <div class="small" id="formSubtitle">Add a project, materials checklist and progress target.</div>
+      </div>
+
+      <div class="form-section">Build</div>
+      <div class="field">
+        <label for="title">Build Name</label>
+        <input id="title" placeholder="Gallery mirror rig, gate controller, coffin repaint">
+      </div>
+      <div class="field">
+        <label for="assetId">Related Asset</label>
+        <select id="assetId"><option value="">Standalone build item</option></select>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="zone">Zone</label>
+          <select id="zone">
+            <option>Exterior Grounds</option><option>Front House</option><option>Upper House</option>
+            <option>Basement</option><option>Cemetery</option><option>Crypt</option><option>Out Back</option>
+            <option>Operations</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="priority">Priority</label>
+          <select id="priority"><option>Normal</option><option>High</option><option>Critical</option><option>Low</option></select>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="stage">Build Stage</label>
+          <select id="stage"><option>Not Started</option><option>Parts Gathering</option><option>Building</option><option>Testing</option><option>Blocked</option><option>Done</option></select>
+        </div>
+        <div class="field">
+          <label for="dueDate">Target Date</label>
+          <input id="dueDate" type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="progress">Build Progress: <span id="progressLabel">0%</span></label>
+        <input id="progress" type="range" min="0" max="100" value="0" oninput="updateProgressLabel()">
+      </div>
+
+      <div class="form-section">Materials</div>
+      <div class="row-2">
+        <div class="field"><label for="matName">Material</label><input id="matName" placeholder="ESP32, foam, paint, hinges"></div>
+        <div class="field"><label for="matQty">Qty / Source</label><input id="matQty" placeholder="2 pcs, Amazon, shop shelf"></div>
+      </div>
+      <div class="inline-buttons">
+        <button class="mini" onclick="addMaterialDraft()">Add Material</button>
+        <button class="mini" onclick="clearMaterials()">Clear Materials</button>
+      </div>
+      <div id="materialDraft" class="materials"></div>
+
+      <div class="form-section">Notes</div>
+      <div class="field">
+        <label for="notes">Build Notes</label>
+        <textarea id="notes" rows="5" placeholder="Cut list, wiring plan, next step, blockers..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="saveBtn" onclick="saveBuild()">Add Build</button>
+        <button class="btn" id="cancelBtn" onclick="cancelEdit()" style="display:none">Cancel Edit</button>
+        <button class="btn quiet" onclick="clearForm()">Clear</button>
+      </div>
+    </aside>
+
+    <section class="panel content-panel">
+      <div class="toolbar">
+        <input id="search" oninput="render()" placeholder="Search builds, zones, materials or notes...">
+        <select id="filterStage" onchange="render()"><option value="">All Stages</option><option>Not Started</option><option>Parts Gathering</option><option>Building</option><option>Testing</option><option>Blocked</option><option>Done</option></select>
+        <select id="filterZone" onchange="render()"><option value="">All Zones</option><option>Exterior Grounds</option><option>Front House</option><option>Upper House</option><option>Basement</option><option>Cemetery</option><option>Crypt</option><option>Out Back</option><option>Operations</option><option>Other</option></select>
+        <select id="filterMaterials" onchange="render()"><option value="">All Materials</option><option value="needed">Materials Needed</option><option value="complete">Materials Complete</option></select>
+        <select id="sortBy" onchange="render()"><option value="priority">Sort: Priority</option><option value="dueDate">Sort: Target Date</option><option value="progress">Sort: Progress</option><option value="title">Sort: Name</option><option value="zone">Sort: Zone</option></select>
+      </div>
+      <div class="actionbar">
+        <div class="actionset">
+          <button class="btn" onclick="exportJSON()">Export JSON</button>
+          <button class="btn" onclick="importJSON()">Import</button>
+          <button class="btn danger" onclick="clearAll()">Clear All</button>
+          <input type="file" id="importFile" accept=".json" hidden onchange="handleImport(event)">
+        </div>
+        <div class="small"><span id="shownCount">0</span> builds shown</div>
+      </div>
+      <div class="hint" id="buildHint"></div>
+      <div class="cards" id="cards"></div>
+      <div class="empty" id="emptyState"><strong>No Build Items Yet</strong>Add the first prop, controller, scenic piece or repair project.</div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="cloudModal" onclick="cloudBackdropClose(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Cloud Sync</h3>
+      <button class="close-x" onclick="closeCloudModal()">×</button>
+    </div>
+    <p>Use the same HollowNet editing password. Viewing is automatic; changing build items requires the password.</p>
+    <div class="field">
+      <label for="cloudAccessCode">Editing Password</label>
+      <input id="cloudAccessCode" type="password" placeholder="At least 12 characters">
+    </div>
+    <div class="inline-buttons">
+      <button class="btn primary" onclick="saveEditingPassword()">Save Editing Password</button>
+      <button class="btn" onclick="pushCloud()">Push Local Builds</button>
+      <button class="btn" onclick="pullCloud()">Reload Shared Builds</button>
+      <button class="btn quiet" onclick="forgetEditingPassword()">Forget Password</button>
+    </div>
+    <div class="hint"><strong>First-time setup:</strong> run the latest <code>supabase-setup.sql</code> once so Supabase has the build-list sync functions.</div>
+  </div>
+</div>
+
+<script>
+const CLOUD_URL = "https://xazotpslpilfiyizykhu.supabase.co";
+const CLOUD_KEY = "sb_publishable_7_mRYNinmfatNPru7tyYsw_IzoJky3L";
+const CLOUD_WORKSPACE = "house-in-the-hollow";
+const EDIT_PASSWORD_KEY = "hollownetEditingPassword";
+const BUILD_STORAGE_KEY = "hollownetBuildItems";
+const ASSET_STORAGE_KEY = "hollownetPlannerItems";
+let builds = JSON.parse(localStorage.getItem(BUILD_STORAGE_KEY) || "[]");
+let assets = JSON.parse(localStorage.getItem(ASSET_STORAGE_KEY) || "[]");
+let editingIndex = null;
+let editingPassword = localStorage.getItem(EDIT_PASSWORD_KEY) || "";
+let materialDraft = [];
+let cloudPushTimer = null;
+
+function el(id){ return document.getElementById(id); }
+function val(id){ return el(id).value.trim(); }
+function setVal(id,value){ el(id).value = value || ""; }
+function esc(str){ return String(str || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-Z0-9-_]/g,""); }
+function normalizeBuild(build){ return {...build, materials:Array.isArray(build.materials) ? build.materials : [], progress:Number(build.progress || 0)}; }
+function normalizeBuilds(){ builds = builds.map(normalizeBuild); }
+function scrollToForm(){ el("buildFormPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
+function updateProgressLabel(){ el("progressLabel").textContent = `${el("progress").value}%`; }
+function setStorageMark(message,state=""){ el("storageMark").textContent = message; el("storageMark").className = `storage-mark${state ? ` ${state}` : ""}`; }
+function updateStorageMark(){ setStorageMark(editingPassword ? "Shared builds · editing unlocked" : "Shared builds · view only"); }
+function openCloudModal(){ setVal("cloudAccessCode",editingPassword); el("cloudModal").classList.add("open"); }
+function closeCloudModal(){ el("cloudModal").classList.remove("open"); }
+function cloudBackdropClose(event){ if(event.target.id === "cloudModal") closeCloudModal(); }
+function saveEditingPassword(){
+  editingPassword = val("cloudAccessCode");
+  if(editingPassword.length < 12){ alert("Use an editing password with at least 12 characters."); return; }
+  localStorage.setItem(EDIT_PASSWORD_KEY, editingPassword);
+  updateStorageMark(); closeCloudModal(); notify("Editing unlocked.");
+}
+function forgetEditingPassword(){
+  editingPassword = ""; localStorage.removeItem(EDIT_PASSWORD_KEY);
+  updateStorageMark(); closeCloudModal(); notify("Editing locked.");
+}
+function requireEditingPassword(){
+  if(editingPassword) return true;
+  openCloudModal(); notify("Enter the editing password to make changes."); return false;
+}
+function populateAssetSelect(){
+  const select = el("assetId");
+  const current = select.value;
+  select.innerHTML = `<option value="">Standalone build item</option>` + assets
+    .map(asset => `<option value="${esc(asset.assetId)}">${esc(asset.assetId)} — ${esc(asset.name)}</option>`).join("");
+  setVal("assetId",current);
+}
+async function cloudRequest(nextBuilds=null){
+  const writing = nextBuilds !== null;
+  if(writing && !requireEditingPassword()) throw new Error("Enter the editing password first.");
+  setStorageMark("Syncing shared builds...","syncing");
+  const functionName = writing ? "sync_hollownet_builds" : "load_hollownet_builds";
+  const payload = writing ? {p_workspace_id:CLOUD_WORKSPACE,p_access_code:editingPassword,p_builds:nextBuilds} : {p_workspace_id:CLOUD_WORKSPACE};
+  const response = await fetch(`${CLOUD_URL}/rest/v1/rpc/${functionName}`,{
+    method:"POST",headers:{"apikey":CLOUD_KEY,"Content-Type":"application/json"},body:JSON.stringify(payload)
+  });
+  if(!response.ok){
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || `Build sync failed (${response.status}). Run the updated Supabase setup SQL first.`);
+  }
+  const result = await response.json();
+  setStorageMark("Shared builds synced");
+  return result;
+}
+async function loadAssets(){
+  try{
+    const response = await fetch(`${CLOUD_URL}/rest/v1/rpc/load_hollownet_workspace`,{
+      method:"POST",headers:{"apikey":CLOUD_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_workspace_id:CLOUD_WORKSPACE})
+    });
+    if(response.ok){
+      const incoming = await response.json();
+      if(Array.isArray(incoming)){ assets = incoming; localStorage.setItem(ASSET_STORAGE_KEY,JSON.stringify(assets)); }
+    }
+  }catch(error){ console.warn(error.message); }
+  populateAssetSelect();
+}
+function queueCloudPush(){
+  if(!editingPassword) return;
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer = setTimeout(async () => {
+    try{ await cloudRequest(builds); }
+    catch(error){ setStorageMark("Build sync needs attention","error"); notify(error.message); }
+  },300);
+}
+async function pushCloud(){ try{ await cloudRequest(builds); closeCloudModal(); notify("Local builds pushed."); }catch(error){ setStorageMark("Build sync needs attention","error"); alert(error.message); } }
+async function pullCloud(){
+  try{
+    const incoming = await cloudRequest(null);
+    if(incoming === null){ notify("Shared build list is not initialized yet. Push local builds first."); return; }
+    if(!Array.isArray(incoming)) throw new Error("The cloud workspace returned invalid build data.");
+    builds = incoming.map(normalizeBuild); localStorage.setItem(BUILD_STORAGE_KEY,JSON.stringify(builds));
+    render(); cancelEdit(); closeCloudModal(); notify("Shared builds loaded.");
+  }catch(error){ setStorageMark("Build sync needs attention","error"); alert(error.message); }
+}
+async function loadSharedBuilds(){
+  try{
+    const incoming = await cloudRequest(null);
+    if(incoming === null){ setStorageMark("Shared build list ready · push local builds to initialize"); return; }
+    if(Array.isArray(incoming)){ builds = incoming.map(normalizeBuild); localStorage.setItem(BUILD_STORAGE_KEY,JSON.stringify(builds)); render(); }
+  }catch(error){ setStorageMark("Shared builds unavailable · using local copy","error"); console.warn(error.message); }
+}
+function addMaterialDraft(){
+  const name = val("matName");
+  if(!name){ alert("Add a material name first."); return; }
+  materialDraft.push({name,qty:val("matQty"),done:false});
+  setVal("matName",""); setVal("matQty",""); renderMaterialDraft();
+}
+function clearMaterials(){ materialDraft = []; renderMaterialDraft(); }
+function renderMaterialDraft(){
+  el("materialDraft").innerHTML = materialDraft.length ? materialDraft.map((mat,index) => `
+    <div class="mat-row${mat.done ? " done" : ""}">
+      <input type="checkbox" ${mat.done ? "checked" : ""} onchange="materialDraft[${index}].done=this.checked;renderMaterialDraft()">
+      <span>${esc(mat.name)}<span class="small">${esc(mat.qty)}</span></span>
+      <button class="mini" onclick="materialDraft.splice(${index},1);renderMaterialDraft()">Remove</button>
+    </div>`).join("") : `<div class="small">No materials added yet.</div>`;
+}
+function getFormBuild(){
+  const now = new Date().toISOString();
+  return {id:editingIndex === null ? `build-${Date.now()}` : builds[editingIndex].id,title:val("title"),assetId:val("assetId"),zone:val("zone"),priority:val("priority"),stage:val("stage"),dueDate:val("dueDate"),progress:Number(el("progress").value),materials:materialDraft,notes:val("notes"),createdAt:editingIndex === null ? now : builds[editingIndex].createdAt,updatedAt:now};
+}
+function saveBuild(){
+  if(!requireEditingPassword()) return;
+  const build = getFormBuild();
+  if(!build.title){ alert("Add a build name first."); return; }
+  if(editingIndex === null){ builds.push(build); notify("Build added."); }
+  else { builds[editingIndex] = build; notify("Build updated."); }
+  persist(); cancelEdit();
+}
+function editBuild(index){
+  if(!requireEditingPassword()) return;
+  const build = builds[index]; editingIndex = index;
+  ["title","assetId","zone","priority","stage","dueDate","notes"].forEach(id => setVal(id,build[id]));
+  el("progress").value = build.progress || 0; updateProgressLabel();
+  materialDraft = JSON.parse(JSON.stringify(build.materials || [])); renderMaterialDraft();
+  el("formTitle").textContent = "Edit Build Item"; el("saveBtn").textContent = "Save Build"; el("cancelBtn").style.display = "inline-flex"; scrollToForm();
+}
+function duplicateBuild(index){
+  if(!requireEditingPassword()) return;
+  const copy = JSON.parse(JSON.stringify(builds[index]));
+  copy.id = `build-${Date.now()}`; copy.title += " Copy"; copy.createdAt = copy.updatedAt = new Date().toISOString();
+  builds.push(copy); persist(); notify("Build copied.");
+}
+function deleteBuild(index){
+  if(!requireEditingPassword()) return;
+  if(confirm(`Delete ${builds[index].title}?`)){ builds.splice(index,1); persist(); notify("Build removed."); }
+}
+function toggleMaterial(buildIndex,matIndex){
+  if(!requireEditingPassword()) return;
+  builds[buildIndex].materials[matIndex].done = !builds[buildIndex].materials[matIndex].done;
+  builds[buildIndex].updatedAt = new Date().toISOString();
+  persist();
+}
+function setStage(index,stage){
+  if(!requireEditingPassword()) return;
+  builds[index].stage = stage;
+  if(stage === "Done") builds[index].progress = 100;
+  builds[index].updatedAt = new Date().toISOString();
+  persist();
+}
+function persist(){ localStorage.setItem(BUILD_STORAGE_KEY,JSON.stringify(builds)); render(); queueCloudPush(); }
+function cancelEdit(){ editingIndex = null; clearForm(); el("formTitle").textContent = "Register Build Item"; el("saveBtn").textContent = "Add Build"; el("cancelBtn").style.display = "none"; }
+function clearForm(){
+  ["title","dueDate","notes","matName","matQty"].forEach(id => setVal(id,""));
+  setVal("assetId",""); setVal("zone","Exterior Grounds"); setVal("priority","Normal"); setVal("stage","Not Started");
+  el("progress").value = 0; updateProgressLabel(); materialDraft = []; renderMaterialDraft();
+}
+function materialStats(build){ const total = build.materials.length; const done = build.materials.filter(mat => mat.done).length; return {total,done,left:total - done}; }
+function priorityRank(priority){ return {Critical:0,High:1,Normal:2,Low:3}[priority] ?? 4; }
+function sortValue(build,sort){ return sort === "progress" ? Number(build.progress || 0) : String(build[sort] || ""); }
+function filteredBuilds(){
+  const term = val("search").toLowerCase(), stage = val("filterStage"), zone = val("filterZone"), mats = val("filterMaterials"), sort = val("sortBy");
+  let list = builds.map((build,index) => ({build,index}));
+  if(term) list = list.filter(({build}) => JSON.stringify(build).toLowerCase().includes(term));
+  if(stage) list = list.filter(({build}) => build.stage === stage);
+  if(zone) list = list.filter(({build}) => build.zone === zone);
+  if(mats === "needed") list = list.filter(({build}) => materialStats(build).left > 0);
+  if(mats === "complete") list = list.filter(({build}) => build.materials.length && materialStats(build).left === 0);
+  list.sort((a,b) => sort === "priority" ? priorityRank(a.build.priority) - priorityRank(b.build.priority) : sort === "progress" ? sortValue(a.build,sort) - sortValue(b.build,sort) : sortValue(a.build,sort).localeCompare(sortValue(b.build,sort)));
+  return list;
+}
+function render(){
+  const list = filteredBuilds();
+  el("cards").innerHTML = list.map(({build,index}) => {
+    const stats = materialStats(build);
+    const asset = assets.find(record => record.assetId === build.assetId);
+    return `<article class="card">
+      <h3>${esc(build.title)}</h3>
+      <div class="small">${asset ? `${esc(asset.assetId)} · ${esc(asset.name)}` : "Standalone build"} · ${esc(build.zone)}${build.dueDate ? ` · Target ${esc(build.dueDate)}` : ""}</div>
+      <div class="card-meta">
+        <span class="badge priority-${cls(build.priority)}">${esc(build.priority)}</span>
+        <span class="badge stage-${cls(build.stage)}">${esc(build.stage)}</span>
+        <span class="badge">${stats.done}/${stats.total} materials</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${Number(build.progress || 0)}%"></div></div>
+      <div class="small">${Number(build.progress || 0)}% complete</div>
+      <div class="materials">
+        ${build.materials.length ? build.materials.map((mat,matIndex) => `<label class="mat-row${mat.done ? " done" : ""}">
+          <input type="checkbox" ${mat.done ? "checked" : ""} onchange="toggleMaterial(${index},${matIndex})">
+          <span>${esc(mat.name)}<span class="small">${esc(mat.qty)}</span></span>
+          <span>${mat.done ? "Ready" : "Needed"}</span>
+        </label>`).join("") : `<div class="small">No materials listed.</div>`}
+      </div>
+      ${build.notes ? `<p>${esc(build.notes).replaceAll("\n","<br>")}</p>` : ""}
+      <div class="card-actions">
+        <button onclick="editBuild(${index})">Edit</button>
+        <button onclick="setStage(${index},'Done')">Mark Done</button>
+        <button onclick="duplicateBuild(${index})">Copy</button>
+        <button onclick="deleteBuild(${index})">Delete</button>
+      </div>
+    </article>`;
+  }).join("");
+  el("emptyState").style.display = list.length ? "none" : "block";
+  el("shownCount").textContent = list.length;
+  el("totalCount").textContent = builds.length;
+  el("todoCount").textContent = builds.filter(build => build.stage === "Not Started").length;
+  el("buildingCount").textContent = builds.filter(build => ["Parts Gathering","Building","Testing"].includes(build.stage)).length;
+  el("blockedCount").textContent = builds.filter(build => build.stage === "Blocked").length;
+  el("doneCount").textContent = builds.filter(build => build.stage === "Done").length;
+  el("materialCount").textContent = builds.reduce((sum,build) => sum + materialStats(build).left,0);
+  const blocked = builds.filter(build => build.stage === "Blocked").length;
+  const critical = builds.filter(build => build.priority === "Critical" && build.stage !== "Done").length;
+  el("buildHint").innerHTML = `<strong>Build focus:</strong> ${critical} critical build${critical === 1 ? "" : "s"} still open. ${blocked} build${blocked === 1 ? "" : "s"} blocked. ${builds.reduce((sum,build) => sum + materialStats(build).left,0)} material line item${builds.reduce((sum,build) => sum + materialStats(build).left,0) === 1 ? "" : "s"} remain unchecked.`;
+}
+function exportJSON(){ download("hollownet_build_planner_backup.json",JSON.stringify(builds,null,2),"application/json"); }
+function importJSON(){ if(!requireEditingPassword()) return; el("importFile").click(); }
+function handleImport(event){
+  const file = event.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const incoming = JSON.parse(e.target.result);
+      if(!Array.isArray(incoming)) throw new Error();
+      if(confirm("Replace current build planner data with this import?")){ builds = incoming.map(normalizeBuild); persist(); notify("Build backup imported."); }
+    }catch{ alert("This does not appear to be a valid HollowNet build backup."); }
+    event.target.value = "";
+  };
+  reader.readAsText(file);
+}
+function clearAll(){
+  if(!requireEditingPassword()) return;
+  if(confirm("Clear all build planner records from this browser and shared sync?")){ builds = []; persist(); cancelEdit(); notify("Build list cleared."); }
+}
+function download(filename,text,mime="text/plain"){
+  const url = URL.createObjectURL(new Blob([text],{type:mime}));
+  const link = document.createElement("a"); link.href = url; link.download = filename; link.click();
+  setTimeout(() => URL.revokeObjectURL(url),500);
+}
+function notify(message){
+  const existing = document.querySelector(".toast"); if(existing) existing.remove();
+  const toast = document.createElement("div"); toast.className = "toast"; toast.textContent = message;
+  toast.style.cssText = "position:fixed;right:22px;bottom:22px;background:#171417;border:1px solid #483a30;color:#eee3cf;padding:12px 15px;border-radius:10px;z-index:40;box-shadow:0 12px 38px rgba(0,0,0,.45);font-size:13px";
+  document.body.appendChild(toast); setTimeout(() => toast.remove(),2400);
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeCloudModal(); });
+normalizeBuilds(); populateAssetSelect(); renderMaterialDraft(); render(); updateStorageMark(); loadAssets(); loadSharedBuilds();
+</script>
+</body>
+</html>
