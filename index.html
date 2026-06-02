@@ -147,10 +147,15 @@ a:hover{text-decoration:underline}
 .storage-mark{
   display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;
 }
+.storage-mark.cloud{color:var(--gold-bright)}
+.storage-mark.syncing{color:#a9b9c8}
+.storage-mark.error{color:#f0b8af}
 .storage-mark::before{
   content:"";width:7px;height:7px;border-radius:50%;background:var(--green);
   box-shadow:0 0 9px rgba(85,113,94,.65);
 }
+.storage-mark.syncing::before{background:var(--blue)}
+.storage-mark.error::before{background:var(--red-bright)}
 .stats{
   display:grid;
   grid-template-columns:repeat(6,minmax(115px,1fr));
@@ -433,6 +438,14 @@ tr:hover td{background:rgba(186,151,96,.035)}
 .label-preview .print-id{font-family:monospace;font-weight:bold;font-size:15px;color:#281b14;margin:7px 0}
 .label-preview p{margin:3px 0;color:#514941;font-size:11px}
 .modal-actions{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap}
+.cloud-help{
+  margin:0 0 15px;color:var(--muted);font-size:12px;line-height:1.6;
+}
+.cloud-note{
+  margin:14px 0 0;padding:10px 11px;border:1px solid var(--line);border-radius:9px;
+  background:#0b0b0d;color:var(--muted);font-size:11px;line-height:1.6;
+}
+.cloud-note strong{color:var(--gold-bright)}
 .labelSheet{display:none}
 .qrLabel{
   width:2.8in;height:1.45in;border:1px solid #222;background:#fff;color:#111;
@@ -475,6 +488,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
         <button class="btn primary" onclick="scrollToForm()">＋ Add Asset</button>
         <button class="btn" onclick="printLabels()">Print QR Labels</button>
         <button class="btn quiet" onclick="exportJSON()">Export Backup</button>
+        <button class="btn quiet" onclick="openCloudModal()">Cloud Sync</button>
       </div>
     </div>
   </header>
@@ -484,7 +498,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
       <h2>Asset Dashboard</h2>
       <div class="small">House in the Hollow automation inventory and service documentation</div>
     </div>
-    <div class="storage-mark">Saved locally in this browser</div>
+    <div class="storage-mark" id="storageMark">Saved locally in this browser</div>
   </div>
 
   <section class="stats" aria-label="asset summary">
@@ -720,14 +734,58 @@ tr:hover td{background:rgba(186,151,96,.035)}
 </div>
 <div id="labelSheet" class="labelSheet"></div>
 
+<div class="modal-backdrop" id="cloudModal" onclick="cloudBackdropClose(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Cloud Sync</h3>
+      <button class="close-x" onclick="closeCloudModal()">×</button>
+    </div>
+    <p class="cloud-help">
+      Connect this browser to your Supabase project and HollowNet workspace. Use the same settings
+      in another browser to share asset records.
+    </p>
+    <div class="field">
+      <label for="cloudUrl">Supabase Project URL</label>
+      <input id="cloudUrl" placeholder="https://your-project.supabase.co">
+    </div>
+    <div class="field">
+      <label for="cloudKey">Supabase Publishable Key</label>
+      <input id="cloudKey" type="password" placeholder="sb_publishable_...">
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label for="cloudWorkspace">Workspace ID</label>
+        <input id="cloudWorkspace" placeholder="house-in-the-hollow">
+      </div>
+      <div class="field">
+        <label for="cloudAccessCode">Workspace Access Code</label>
+        <input id="cloudAccessCode" type="password" placeholder="Use the same private code everywhere">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="saveCloudSettings()">Save Connection</button>
+      <button class="btn" onclick="pushCloud()">Push Local Assets</button>
+      <button class="btn" onclick="pullCloud()">Pull Cloud Assets</button>
+      <button class="btn quiet" onclick="disconnectCloud()">Disconnect</button>
+    </div>
+    <p class="cloud-note">
+      <strong>First-time setup:</strong> run <code>supabase-setup.sql</code> once in your Supabase SQL editor.
+      The publishable key is intended for browser apps. Do not use a secret or service-role key here.
+    </p>
+  </div>
+</div>
+
 <script>
 let items = JSON.parse(localStorage.getItem("hollownetPlannerItems") || "[]");
 let editingIndex = null;
 let selectedQRIndex = null;
+const CLOUD_CONFIG_KEY = "hollownetCloudConfig";
+let cloudConfig = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "null");
+let cloudPushTimer = null;
 
 const TYPE_CODES = {
-  "Animatronic":"ANM","Lighting":"LGT","Projection":"PRJ","Audio":"AUD",
-  "Fog / Mist":"FOG","Sensor":"SNS","Pneumatic":"PNU","Motor":"MTR",
+  "Animatronic":"ANM","Lighting":"LGT","Video":"VID","Projection":"PRJ","Audio":"AUD",
+  "Fog / Mist":"FOG","Sensor":"SNS","Pneumatic":"PNU","Motor":"MTR","Puppet":"PUP",
   "Interactive":"INT","Utility / Power":"UTL","Scene Controller":"SCN",
   "Actor Trigger":"ACT","Other":"OTH"
 };
@@ -777,6 +835,91 @@ async function copyFolderName(){
   }
 }
 function scrollToForm(){ el("assetFormPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
+function cloudReady(){
+  return cloudConfig && cloudConfig.url && cloudConfig.key && cloudConfig.workspace && cloudConfig.accessCode;
+}
+function setStorageMark(message,state=""){
+  el("storageMark").textContent = message;
+  el("storageMark").className = `storage-mark${state ? ` ${state}` : ""}`;
+}
+function updateStorageMark(){
+  setStorageMark(cloudReady() ? "Cloud sync connected" : "Saved locally in this browser", cloudReady() ? "cloud" : "");
+}
+function openCloudModal(){
+  setVal("cloudUrl",cloudConfig?.url);
+  setVal("cloudKey",cloudConfig?.key);
+  setVal("cloudWorkspace",cloudConfig?.workspace);
+  setVal("cloudAccessCode",cloudConfig?.accessCode);
+  el("cloudModal").classList.add("open");
+}
+function closeCloudModal(){ el("cloudModal").classList.remove("open"); }
+function cloudBackdropClose(event){ if(event.target.id === "cloudModal") closeCloudModal(); }
+function saveCloudSettings(){
+  cloudConfig = {
+    url:val("cloudUrl").replace(/\/+$/,""),
+    key:val("cloudKey"),
+    workspace:val("cloudWorkspace"),
+    accessCode:val("cloudAccessCode")
+  };
+  if(!cloudReady()){ alert("Add the Supabase URL, publishable key, workspace ID and access code."); return; }
+  localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(cloudConfig));
+  updateStorageMark();
+  closeCloudModal();
+  notify("Cloud connection saved. Push local assets or pull the cloud workspace.");
+}
+function disconnectCloud(){
+  if(!confirm("Disconnect this browser from cloud sync? Your local asset records will stay here.")) return;
+  cloudConfig = null;
+  localStorage.removeItem(CLOUD_CONFIG_KEY);
+  updateStorageMark();
+  closeCloudModal();
+  notify("Cloud sync disconnected. Local records are unchanged.");
+}
+async function cloudRequest(nextItems){
+  if(!cloudReady()){ openCloudModal(); throw new Error("Add cloud connection settings first."); }
+  setStorageMark("Syncing cloud assets...","syncing");
+  const response = await fetch(`${cloudConfig.url}/rest/v1/rpc/sync_hollownet_workspace`,{
+    method:"POST",
+    headers:{"apikey":cloudConfig.key,"Content-Type":"application/json"},
+    body:JSON.stringify({
+      p_workspace_id:cloudConfig.workspace,
+      p_access_code:cloudConfig.accessCode,
+      p_items:nextItems
+    })
+  });
+  if(!response.ok){
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || `Cloud sync failed (${response.status}).`);
+  }
+  const result = await response.json();
+  setStorageMark("Cloud assets synced","cloud");
+  return result;
+}
+function queueCloudPush(){
+  if(!cloudReady()) return;
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer = setTimeout(async () => {
+    try{ await cloudRequest(items); }
+    catch(error){ setStorageMark("Cloud sync needs attention","error"); notify(error.message); }
+  },250);
+}
+async function pushCloud(){
+  try{ await cloudRequest(items); closeCloudModal(); notify("Local assets pushed to the cloud."); }
+  catch(error){ setStorageMark("Cloud sync needs attention","error"); alert(error.message); }
+}
+async function pullCloud(){
+  if(items.length && !confirm("Replace this browser's local assets with the cloud workspace?")) return;
+  try{
+    const incoming = await cloudRequest(null);
+    if(!Array.isArray(incoming)) throw new Error("The cloud workspace returned invalid asset data.");
+    items = incoming;
+    localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
+    render();
+    cancelEdit();
+    closeCloudModal();
+    notify("Cloud assets pulled into this browser.");
+  }catch(error){ setStorageMark("Cloud sync needs attention","error"); alert(error.message); }
+}
 
 function getFormItem(){
   const assetId = val("assetId") || nextAssetId(val("type"));
@@ -857,6 +1000,7 @@ function duplicateItem(realIndex){
 function persist(){
   localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
   render();
+  queueCloudPush();
 }
 
 function filteredItems(){
@@ -1054,8 +1198,11 @@ function notify(message){
   document.body.appendChild(toast);
   setTimeout(()=>toast.remove(),2400);
 }
-document.addEventListener("keydown", e => { if(e.key === "Escape") closeQRModal(); });
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){ closeQRModal(); closeCloudModal(); }
+});
 render();
+updateStorageMark();
 </script>
 </body>
 </html>
