@@ -158,7 +158,7 @@ a:hover{text-decoration:underline}
 .storage-mark.error::before{background:var(--red-bright)}
 .stats{
   display:grid;
-  grid-template-columns:repeat(6,minmax(115px,1fr));
+  grid-template-columns:repeat(8,minmax(105px,1fr));
   gap:12px;
   margin-bottom:18px;
 }
@@ -308,7 +308,7 @@ textarea{resize:vertical;min-height:68px}
 .content-panel{padding:18px;min-height:700px}
 .toolbar{
   display:grid;
-  grid-template-columns:minmax(190px,1.7fr) repeat(3,minmax(135px,1fr));
+  grid-template-columns:minmax(190px,1.7fr) repeat(4,minmax(130px,1fr));
   gap:9px;
   margin-bottom:12px;
 }
@@ -374,6 +374,10 @@ tr:hover td{background:rgba(186,151,96,.035)}
 .status-Retired{background:rgba(129,37,31,.18);border-color:#55201d}
 .critical-Critical{color:#f0b8af;border-color:#74322d;background:var(--red-soft)}
 .critical-Important{color:var(--gold-bright)}
+.inspection-Ready{color:#b9d5c1;border-color:#3b5243;background:rgba(85,113,94,.23)}
+.inspection-Needs-Attention{color:#efd49e;border-color:#72532e;background:rgba(186,151,96,.14)}
+.inspection-Offline{color:#f0b8af;border-color:#74322d;background:var(--red-soft)}
+.warning-mark{color:#efd49e;font-size:11px;display:block;margin-top:5px}
 .qr-thumb{
   width:48px;height:48px;padding:3px;background:#fff;border-radius:6px;display:block;
 }
@@ -446,6 +450,23 @@ tr:hover td{background:rgba(186,151,96,.035)}
   background:#0b0b0d;color:var(--muted);font-size:11px;line-height:1.6;
 }
 .cloud-note strong{color:var(--gold-bright)}
+.detail-modal{width:min(820px,100%);max-height:calc(100vh - 40px);overflow:auto}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-card{border:1px solid var(--line);background:#0b0b0d;border-radius:10px;padding:12px;color:var(--muted);font-size:12px;line-height:1.65}
+.detail-card h4{margin:0 0 7px;color:var(--gold-bright);font-family:Cinzel,serif;font-size:12px;letter-spacing:.1em}
+.detail-card strong{color:var(--text)}
+.detail-card a{display:block;overflow-wrap:anywhere;margin:2px 0}
+.service-entry{border-top:1px solid var(--line);padding:9px 0 0;margin-top:9px}
+.service-entry:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.service-form{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.attention-panel{margin:12px 0;padding:10px 12px;border:1px solid #59482e;border-radius:10px;background:rgba(186,151,96,.08);color:#cbbda8;font-size:12px;line-height:1.55}
+.attention-panel strong{color:var(--gold-bright)}
+.asset-mobile-view{display:none;position:relative;z-index:2;max-width:760px;margin:0 auto;padding:18px 14px 34px}
+.asset-mobile-view.open{display:block}
+.mobile-logo{display:block;width:min(100%,430px);margin:0 auto 8px}
+.mobile-title{font-family:Cinzel,serif;color:var(--ivory);letter-spacing:.06em;font-size:23px;margin:10px 0 5px}
+.mobile-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+body.asset-view .shell{display:none}
 .labelSheet{display:none}
 .qrLabel{
   width:2.8in;height:1.45in;border:1px solid #222;background:#fff;color:#111;
@@ -473,6 +494,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
   .logo{height:auto}
   .stats{grid-template-columns:repeat(2,1fr)}
   .toolbar,.row-2{grid-template-columns:1fr}
+  .detail-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -508,6 +530,8 @@ tr:hover td{background:rgba(186,151,96,.035)}
     <div class="stat"><b id="installedCount">0</b><span>Installed</span></div>
     <div class="stat"><b id="testedCount">0</b><span>Tested</span></div>
     <div class="stat"><b id="criticalCount">0</b><span>Critical</span></div>
+    <div class="stat"><b id="attentionCount">0</b><span>Needs Attention</span></div>
+    <div class="stat"><b id="warningCount">0</b><span>Incomplete</span></div>
   </section>
 
   <main class="workbench">
@@ -539,7 +563,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
           <select id="type" onchange="suggestIdPreview()">
             <option>Animatronic</option><option>Lighting</option><option>Video</option>
             <option>Projection</option><option>Audio</option><option>Fog / Mist</option>
-            <option>Sensor</option><option>Pneumatic</option><option>Motor</option>
+            <option>Sensor</option><option>Pneumatic</option><option>Motor</option><option>Mic</option>
             <option>Interactive</option><option>Utility / Power</option><option>Scene Controller</option>
             <option>Actor Trigger</option><option>Other</option><option>Puppet</option>
           </select>
@@ -560,7 +584,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
           <label for="zone">Technical Zone</label>
           <select id="zone">
             <option>Exterior Grounds</option><option>Front House</option>
-            <option>Upper House</option><option>Basement</option>
+            <option>Upper House</option><option>Basement</option><option>Cemetery</option><option>Crypt</option><option>Out Back</option>
             <option>Operations</option><option>Other</option>
           </select>
         </div>
@@ -575,6 +599,12 @@ tr:hover td{background:rgba(186,151,96,.035)}
       <div class="field">
         <label for="room">Room / Scene Area</label>
         <input id="room" placeholder="Bridge, Library, Furnace Room">
+      </div>
+      <div class="field">
+        <label for="inspection">Opening-Night Check</label>
+        <select id="inspection">
+          <option>Ready</option><option>Needs Attention</option><option>Offline</option>
+        </select>
       </div>
 
       <div class="form-section">Controller & Operation</div>
@@ -612,6 +642,15 @@ tr:hover td{background:rgba(186,151,96,.035)}
           <option>Main Hub</option><option>Zone Controller</option>
           <option>Room Controller</option><option>Local Only</option>
         </select>
+      </div>
+      <div class="form-section">Dependencies</div>
+      <div class="field">
+        <label for="controlledBy">Controlled By</label>
+        <textarea id="controlledBy" placeholder="Asset IDs or controller names, one per line"></textarea>
+      </div>
+      <div class="field">
+        <label for="affects">Affects</label>
+        <textarea id="affects" placeholder="Connected asset IDs, one per line"></textarea>
       </div>
 
       <details>
@@ -667,7 +706,8 @@ tr:hover td{background:rgba(186,151,96,.035)}
         <select id="filterZone" onchange="render()">
           <option value="">All Zones</option><option>Exterior Grounds</option>
           <option>Front House</option><option>Upper House</option>
-          <option>Basement</option><option>Operations</option><option>Other</option>
+          <option>Basement</option><option>Cemetery</option><option>Crypt</option>
+          <option>Out Back</option><option>Operations</option><option>Other</option>
         </select>
         <select id="filterStatus" onchange="render()">
           <option value="">All Statuses</option><option>Planned</option><option>Built</option>
@@ -677,6 +717,10 @@ tr:hover td{background:rgba(186,151,96,.035)}
           <option value="zone">Sort: Zone</option><option value="room">Sort: Room</option>
           <option value="name">Sort: Name</option><option value="assetId">Sort: Asset ID</option>
           <option value="type">Sort: Type</option><option value="status">Sort: Status</option>
+        </select>
+        <select id="filterAttention" onchange="render()">
+          <option value="">All Records</option><option value="attention">Needs Attention</option>
+          <option value="incomplete">Incomplete Records</option>
         </select>
       </div>
 
@@ -693,6 +737,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
         <div class="count-display"><span id="shownCount">0</span> records shown</div>
       </div>
       <p class="inventory-help">To update an existing asset, choose <strong>Edit</strong> in its Actions column.</p>
+      <div class="attention-panel" id="attentionPanel"></div>
 
       <div class="table-wrap">
         <table aria-label="HollowNet inventory">
@@ -734,6 +779,21 @@ tr:hover td{background:rgba(186,151,96,.035)}
 </div>
 <div id="labelSheet" class="labelSheet"></div>
 
+<div class="modal-backdrop" id="detailModal" onclick="detailBackdropClose(event)">
+  <div class="modal detail-modal">
+    <div class="modal-head">
+      <h3>Asset Details & Service</h3>
+      <button class="close-x" onclick="closeDetailModal()">×</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<section class="asset-mobile-view" id="assetMobileView">
+  <img class="mobile-logo" src="assets/hollownet-logo.png" alt="HollowNet">
+  <div id="mobileAssetContent"></div>
+</section>
+
 <div class="modal-backdrop" id="cloudModal" onclick="cloudBackdropClose(event)">
   <div class="modal">
     <div class="modal-head">
@@ -765,6 +825,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
 let items = JSON.parse(localStorage.getItem("hollownetPlannerItems") || "[]");
 let editingIndex = null;
 let selectedQRIndex = null;
+let selectedDetailIndex = null;
 const CLOUD_URL = "https://xazotpslpilfiyizykhu.supabase.co";
 const CLOUD_KEY = "sb_publishable_7_mRYNinmfatNPru7tyYsw_IzoJky3L";
 const CLOUD_WORKSPACE = "house-in-the-hollow";
@@ -773,7 +834,7 @@ let editingPassword = localStorage.getItem(EDIT_PASSWORD_KEY) || "";
 let cloudPushTimer = null;
 
 const TYPE_CODES = {
-  "Animatronic":"ANM","Lighting":"LGT","Video":"VID","Projection":"PRJ","Audio":"AUD",
+  "Animatronic":"ANM","Lighting":"LGT","Video":"VID","Projection":"PRJ","Audio":"AUD","Mic":"MIC",
   "Fog / Mist":"FOG","Sensor":"SNS","Pneumatic":"PNU","Motor":"MTR","Puppet":"PUP",
   "Interactive":"INT","Utility / Power":"UTL","Scene Controller":"SCN",
   "Actor Trigger":"ACT","Other":"OTH"
@@ -792,6 +853,41 @@ function esc(str){
     .replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-Z0-9-_]/g,""); }
+function lines(str){ return String(str || "").split("\n").map(line => line.trim()).filter(Boolean); }
+function normalizeItem(item){
+  return {...item, inspection:item.inspection || "Ready", controlledBy:item.controlledBy || "",
+    affects:item.affects || "", serviceHistory:Array.isArray(item.serviceHistory) ? item.serviceHistory : []};
+}
+function normalizeItems(){ items = items.map(normalizeItem); }
+function appURL(assetId=""){
+  const url = new URL(window.location.href);
+  url.search = "";
+  if(assetId) url.searchParams.set("asset",assetId);
+  return url.toString();
+}
+function linkMarkup(value){
+  const values = lines(value);
+  return values.length ? values.map(link => {
+    const href = /^https?:\/\//i.test(link) ? link : "";
+    return href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(link)}</a>` : `<div>${esc(link)}</div>`;
+  }).join("") : "—";
+}
+function dependencyMarkup(value){
+  const values = lines(value);
+  return values.length ? values.map(ref => {
+    const index = items.findIndex(item => item.assetId === ref);
+    return index === -1 ? `<div>${esc(ref)}</div>` : `<button class="mini" onclick="openDetailModal(${index})">${esc(ref)}</button>`;
+  }).join(" ") : "—";
+}
+function itemWarnings(item){
+  const warnings = [];
+  if(!item.room) warnings.push("room");
+  if(!item.power) warnings.push("power");
+  if(!item.notes) warnings.push("notes");
+  if(!item.controller && !["Puppet","Other"].includes(item.type)) warnings.push("controller");
+  if(items.filter(record => record.assetId === item.assetId).length > 1) warnings.push("duplicate ID");
+  return warnings;
+}
 
 function nextAssetId(type){
   const prefix = `HNA-${yearCode()}-${typeCode(type)}-`;
@@ -899,6 +995,7 @@ async function pullCloud(){
     if(incoming === null){ notify("Shared workspace is not initialized yet. Push local assets first."); return; }
     if(!Array.isArray(incoming)) throw new Error("The cloud workspace returned invalid asset data.");
     items = incoming;
+    normalizeItems();
     localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
     render();
     cancelEdit();
@@ -915,6 +1012,7 @@ async function loadSharedAssets(){
     }
     if(!Array.isArray(incoming)) throw new Error("The shared workspace returned invalid asset data.");
     items = incoming;
+    normalizeItems();
     localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
     render();
   }catch(error){
@@ -930,10 +1028,12 @@ function getFormItem(){
     status:val("status"), criticality:val("criticality"), controllerId:val("controllerId"),
     controller:val("controller"), trigger:val("trigger"), outputs:val("outputs"),
     power:val("power"), network:val("network"), reportsTo:val("reportsTo"),
+    inspection:val("inspection"), controlledBy:val("controlledBy"), affects:val("affects"),
     assetFolder:val("assetFolder") || suggestedFolder(assetId,val("name")),
     photoLinks:val("photoLinks"), videoLinks:val("videoLinks"), wiringLinks:val("wiringLinks"),
     firmwareLinks:val("firmwareLinks"), manualLinks:val("manualLinks"),
     maintenanceLog:val("maintenanceLog"), notes:val("notes"),
+    serviceHistory:editingIndex === null ? [] : (items[editingIndex].serviceHistory || []),
     updatedAt:new Date().toISOString()
   };
 }
@@ -960,7 +1060,7 @@ function editItem(realIndex){
   const item = items[realIndex];
   editingIndex = realIndex;
   ["assetId","name","zone","room","type","status","criticality","controllerId","controller",
-   "trigger","outputs","power","network","reportsTo","assetFolder","photoLinks","videoLinks",
+   "trigger","outputs","power","network","reportsTo","inspection","controlledBy","affects","assetFolder","photoLinks","videoLinks",
    "wiringLinks","firmwareLinks","manualLinks","maintenanceLog","notes"].forEach(id => setVal(id,item[id]));
   el("formTitle").textContent = "Edit Asset Record";
   el("formSubtitle").textContent = "Update this saved asset record and its documentation.";
@@ -983,10 +1083,11 @@ function cancelEdit(){
 }
 function clearForm(){
   ["assetId","name","room","controllerId","controller","trigger","outputs","power","network",
-   "assetFolder","photoLinks","videoLinks","wiringLinks","firmwareLinks","manualLinks",
+   "controlledBy","affects","assetFolder","photoLinks","videoLinks","wiringLinks","firmwareLinks","manualLinks",
    "maintenanceLog","notes"].forEach(id => setVal(id,""));
   setVal("type","Animatronic"); setVal("zone","Exterior Grounds"); setVal("status","Planned");
   setVal("criticality","Normal"); setVal("reportsTo","Main Hub");
+  setVal("inspection","Ready");
 }
 function deleteItem(realIndex){
   if(!requireEditingPassword()) return;
@@ -1013,33 +1114,39 @@ function filteredItems(){
   const term = val("search").toLowerCase();
   const zone = val("filterZone");
   const status = val("filterStatus");
+  const attention = val("filterAttention");
   const sort = val("sortBy");
   let list = items.map((item,realIndex) => ({item,realIndex}));
   if(term) list = list.filter(({item}) => JSON.stringify(item).toLowerCase().includes(term));
   if(zone) list = list.filter(({item}) => item.zone === zone);
   if(status) list = list.filter(({item}) => item.status === status);
+  if(attention === "attention") list = list.filter(({item}) => item.inspection !== "Ready");
+  if(attention === "incomplete") list = list.filter(({item}) => itemWarnings(item).length);
   list.sort((a,b) => String(a.item[sort] || "").localeCompare(String(b.item[sort] || "")));
   return list;
 }
 function qrURL(text,size=160){
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=0&data=${encodeURIComponent(text)}`;
 }
+function assetQRURL(item,size=160){ return qrURL(appURL(item.assetId),size); }
 function render(){
   const tbody = el("tbody");
   tbody.innerHTML = "";
   const list = filteredItems();
   list.forEach(({item,realIndex}) => {
+    const warnings = itemWarnings(item);
     const row = document.createElement("tr");
     row.innerHTML = `
       <td><span class="asset-id">${esc(item.assetId)}</span></td>
-      <td><span class="asset-name">${esc(item.name)}</span><span class="subtext"><span class="badge critical-${cls(item.criticality)}">${esc(item.criticality)}</span></span></td>
+      <td><span class="asset-name">${esc(item.name)}</span><span class="subtext"><span class="badge critical-${cls(item.criticality)}">${esc(item.criticality)}</span></span>${warnings.length ? `<span class="warning-mark">Missing: ${esc(warnings.join(", "))}</span>` : ""}</td>
       <td>${esc(item.zone)}<span class="subtext">${esc(item.room)}</span></td>
       <td>${esc(item.type)}</td>
-      <td><span class="badge status-${cls(item.status)}">${esc(item.status)}</span></td>
+      <td><span class="badge status-${cls(item.status)}">${esc(item.status)}</span><span class="subtext"><span class="badge inspection-${cls(item.inspection)}">${esc(item.inspection)}</span></span></td>
       <td>${esc(item.controller || "—")}<span class="subtext">${esc(item.controllerId)}</span></td>
-      <td><img class="qr-thumb" src="${qrURL(item.assetId,96)}" alt="QR for ${esc(item.assetId)}" onclick="openQRModal(${realIndex})"></td>
+      <td><img class="qr-thumb" src="${assetQRURL(item,96)}" alt="QR for ${esc(item.assetId)}" onclick="openQRModal(${realIndex})"></td>
       <td><div class="table-actions">
         <button class="edit-action" onclick="editItem(${realIndex})">Edit</button>
+        <button onclick="openDetailModal(${realIndex})">Details</button>
         <button onclick="openQRModal(${realIndex})">Label</button>
         <button onclick="downloadReadme(${realIndex})">README</button>
         <button onclick="duplicateItem(${realIndex})">Copy</button>
@@ -1055,7 +1162,15 @@ function render(){
   el("installedCount").textContent = countStatus("Installed");
   el("testedCount").textContent = countStatus("Tested");
   el("criticalCount").textContent = items.filter(item => item.criticality === "Critical").length;
+  el("attentionCount").textContent = items.filter(item => item.inspection !== "Ready").length;
+  el("warningCount").textContent = items.filter(item => itemWarnings(item).length).length;
+  const issueCount = items.filter(item => item.inspection !== "Ready").length;
+  const incompleteCount = items.filter(item => itemWarnings(item).length).length;
+  el("attentionPanel").innerHTML = issueCount || incompleteCount
+    ? `<strong>Opening-night review:</strong> ${issueCount} asset${issueCount === 1 ? "" : "s"} need attention or are offline. ${incompleteCount} record${incompleteCount === 1 ? "" : "s"} are missing useful details. Use the last filter above to focus the list.`
+    : `<strong>Opening-night review:</strong> Every asset is marked ready and all records have the recommended details.`;
   suggestIdPreview();
+  renderMobileAssetView();
 }
 function countStatus(status){ return items.filter(item => item.status === status).length; }
 
@@ -1068,7 +1183,7 @@ function labelMarkup(item, preview=false){
       <p class="${preview ? "" : "qrSmall"}">${esc(item.zone)} · ${esc(item.room)}</p>
       <p class="${preview ? "" : "qrSmall"}">${esc(item.type)}</p>
     </div>
-    <img src="${qrURL(item.assetId,220)}" alt="QR Code">`;
+    <img src="${assetQRURL(item,220)}" alt="QR Code">`;
 }
 function openQRModal(realIndex){
   selectedQRIndex = realIndex;
@@ -1088,6 +1203,99 @@ function printCurrentLabel(){
   printLabels([items[selectedQRIndex]]);
 }
 function downloadCurrentReadme(){ if(selectedQRIndex !== null) downloadReadme(selectedQRIndex); }
+function serviceHistoryMarkup(item){
+  const entries = item.serviceHistory || [];
+  return entries.length ? entries.slice().reverse().map(entry => `
+    <div class="service-entry">
+      <strong>${esc(entry.date || "")}${entry.person ? ` · ${esc(entry.person)}` : ""}</strong>
+      <div>${esc(entry.issue || "Routine service")}</div>
+      ${entry.fix ? `<div><strong>Work:</strong> ${esc(entry.fix)}</div>` : ""}
+      ${entry.parts ? `<div><strong>Parts:</strong> ${esc(entry.parts)}</div>` : ""}
+    </div>`).join("") : "No structured service entries yet.";
+}
+function detailMarkup(item, allowService=true){
+  const warnings = itemWarnings(item);
+  return `
+    <div class="mobile-title">${esc(item.name)}</div>
+    <div class="small">${esc(item.assetId)} · ${esc(item.type)} · ${esc(item.zone)} ${esc(item.room)}</div>
+    <div class="mobile-actions">
+      <span class="badge status-${cls(item.status)}">${esc(item.status)}</span>
+      <span class="badge inspection-${cls(item.inspection)}">${esc(item.inspection)}</span>
+      <span class="badge critical-${cls(item.criticality)}">${esc(item.criticality)}</span>
+    </div>
+    ${warnings.length ? `<div class="attention-panel"><strong>Record reminder:</strong> Add ${esc(warnings.join(", "))}.</div>` : ""}
+    <div class="detail-grid">
+      <div class="detail-card"><h4>Operation</h4>
+        <strong>Controller:</strong> ${esc(item.controller || "—")} ${item.controllerId ? `(${esc(item.controllerId)})` : ""}<br>
+        <strong>Reports to:</strong> ${esc(item.reportsTo || "—")}<br>
+        <strong>Trigger:</strong> ${esc(item.trigger || "—")}<br>
+        <strong>Outputs:</strong> ${esc(item.outputs || "—")}<br>
+        <strong>Power:</strong> ${esc(item.power || "—")}<br>
+        <strong>Network:</strong> ${esc(item.network || "—")}
+      </div>
+      <div class="detail-card"><h4>Dependencies</h4>
+        <strong>Controlled by:</strong><br>${dependencyMarkup(item.controlledBy)}
+        <br><br><strong>Affects:</strong><br>${dependencyMarkup(item.affects)}
+      </div>
+      <div class="detail-card"><h4>Documents</h4>
+        <strong>Photos:</strong>${linkMarkup(item.photoLinks)}
+        <strong>Video:</strong>${linkMarkup(item.videoLinks)}
+        <strong>Wiring:</strong>${linkMarkup(item.wiringLinks)}
+        <strong>Manuals:</strong>${linkMarkup(item.manualLinks)}
+        <strong>Firmware:</strong>${linkMarkup(item.firmwareLinks)}
+      </div>
+      <div class="detail-card"><h4>Notes</h4>${esc(item.notes || "—").replaceAll("\n","<br>")}</div>
+    </div>
+    <div class="detail-card" style="margin-top:12px"><h4>Service History</h4>${serviceHistoryMarkup(item)}</div>
+    ${allowService ? `<div class="service-form">
+      <h4 style="color:var(--gold-bright);font-family:Cinzel,serif;letter-spacing:.1em">Add Service Entry</h4>
+      <div class="row-2">
+        <div class="field"><label for="serviceDate">Date</label><input id="serviceDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+        <div class="field"><label for="servicePerson">Completed By</label><input id="servicePerson" placeholder="Name"></div>
+      </div>
+      <div class="field"><label for="serviceIssue">Issue or Inspection</label><input id="serviceIssue" placeholder="Routine test, issue found, or reason for visit"></div>
+      <div class="field"><label for="serviceFix">Work Completed</label><textarea id="serviceFix" placeholder="What was adjusted, repaired, or tested"></textarea></div>
+      <div class="field"><label for="serviceParts">Parts Used</label><input id="serviceParts" placeholder="Optional"></div>
+      <button class="btn primary" onclick="addServiceEntry()">Save Service Entry</button>
+    </div>` : ""}
+  `;
+}
+function openDetailModal(realIndex){
+  selectedDetailIndex = realIndex;
+  el("detailContent").innerHTML = detailMarkup(items[realIndex]);
+  el("detailModal").classList.add("open");
+}
+function closeDetailModal(){ el("detailModal").classList.remove("open"); selectedDetailIndex = null; }
+function detailBackdropClose(event){ if(event.target.id === "detailModal") closeDetailModal(); }
+function addServiceEntry(){
+  if(!requireEditingPassword()) return;
+  const requestedId = new URLSearchParams(window.location.search).get("asset");
+  const realIndex = selectedDetailIndex !== null
+    ? selectedDetailIndex
+    : items.findIndex(item => item.assetId === requestedId);
+  if(realIndex === -1) return;
+  const entry = {
+    date:val("serviceDate"), person:val("servicePerson"), issue:val("serviceIssue"),
+    fix:val("serviceFix"), parts:val("serviceParts"), createdAt:new Date().toISOString()
+  };
+  if(!entry.issue && !entry.fix){ alert("Add an inspection note or describe the work completed."); return; }
+  items[realIndex].serviceHistory = [...(items[realIndex].serviceHistory || []),entry];
+  items[realIndex].updatedAt = new Date().toISOString();
+  persist();
+  if(selectedDetailIndex !== null) openDetailModal(realIndex);
+  renderMobileAssetView();
+  notify("Service entry saved.");
+}
+function renderMobileAssetView(){
+  const requestedId = new URLSearchParams(window.location.search).get("asset");
+  if(!requestedId) return;
+  document.body.classList.add("asset-view");
+  el("assetMobileView").classList.add("open");
+  const item = items.find(record => record.assetId === requestedId);
+  el("mobileAssetContent").innerHTML = item
+    ? `<a class="btn quiet" href="${esc(appURL())}">← Full Planner</a>${detailMarkup(item,true)}`
+    : `<a class="btn quiet" href="${esc(appURL())}">← Full Planner</a><div class="mobile-title">Asset Not Found</div><p class="small">This asset is not in the shared HollowNet workspace.</p>`;
+}
 
 function makeReadme(item){
 return `# ${item.name || "Unnamed Asset"}
@@ -1097,6 +1305,7 @@ return `# ${item.name || "Unnamed Asset"}
 - Type: ${item.type || ""}
 - Status: ${item.status || ""}
 - Criticality: ${item.criticality || ""}
+- Opening-Night Check: ${item.inspection || "Ready"}
 - Zone: ${item.zone || ""}
 - Room / Area: ${item.room || ""}
 - Asset Folder: ${item.assetFolder || ""}
@@ -1109,6 +1318,10 @@ return `# ${item.name || "Unnamed Asset"}
 - Outputs: ${item.outputs || ""}
 - Power: ${item.power || ""}
 - Network / Communication: ${item.network || ""}
+
+## Dependencies
+- Controlled By: ${item.controlledBy || ""}
+- Affects: ${item.affects || ""}
 
 ## Documentation Links
 
@@ -1129,6 +1342,9 @@ ${item.manualLinks || ""}
 
 ## Maintenance Log
 ${item.maintenanceLog || ""}
+
+## Structured Service History
+${(item.serviceHistory || []).map(entry => `- ${entry.date || ""}${entry.person ? ` · ${entry.person}` : ""}: ${entry.issue || "Routine service"}${entry.fix ? ` — ${entry.fix}` : ""}${entry.parts ? ` (Parts: ${entry.parts})` : ""}`).join("\n")}
 
 ## Notes
 ${item.notes || ""}
@@ -1161,9 +1377,13 @@ function exportAllReadmes(){
 function exportJSON(){ download("hollownet_planner_backup.json", JSON.stringify(items,null,2), "application/json"); }
 function exportCSV(){
   const headers = ["assetId","name","zone","room","type","status","criticality","controllerId",
-    "controller","trigger","outputs","power","network","reportsTo","assetFolder","photoLinks",
-    "videoLinks","wiringLinks","firmwareLinks","manualLinks","maintenanceLog","notes","createdAt","updatedAt"];
-  const rows = items.map(item => headers.map(h => `"${String(item[h] || "").replaceAll('"','""')}"`).join(","));
+    "controller","trigger","outputs","power","network","reportsTo","inspection","controlledBy","affects",
+    "assetFolder","photoLinks","videoLinks","wiringLinks","firmwareLinks","manualLinks","maintenanceLog",
+    "serviceHistory","notes","createdAt","updatedAt"];
+  const rows = items.map(item => headers.map(h => {
+    const value = typeof item[h] === "object" ? JSON.stringify(item[h]) : item[h];
+    return `"${String(value || "").replaceAll('"','""')}"`;
+  }).join(","));
   download("hollownet_planner_export.csv", headers.join(",") + "\n" + rows.join("\n"), "text/csv");
 }
 function importJSON(){
@@ -1210,8 +1430,9 @@ function notify(message){
   setTimeout(()=>toast.remove(),2400);
 }
 document.addEventListener("keydown", e => {
-  if(e.key === "Escape"){ closeQRModal(); closeCloudModal(); }
+  if(e.key === "Escape"){ closeQRModal(); closeCloudModal(); closeDetailModal(); }
 });
+normalizeItems();
 render();
 updateStorageMark();
 loadSharedAssets();
