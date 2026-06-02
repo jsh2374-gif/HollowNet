@@ -268,6 +268,18 @@ textarea{resize:vertical;min-height:68px}
   margin-top:7px;
 }
 .id-preview strong{color:var(--gold-bright);letter-spacing:.06em}
+.editing-banner{
+  display:none;
+  margin:0 0 14px;
+  padding:10px 11px;
+  border:1px solid #59482e;
+  border-radius:9px;
+  background:rgba(186,151,96,.1);
+  color:#cbbda8;
+  font-size:12px;
+  line-height:1.5;
+}
+.editing-banner strong{color:var(--gold-bright)}
 .inline-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .mini{
   border:1px solid var(--line);
@@ -366,6 +378,17 @@ tr:hover td{background:rgba(186,151,96,.035)}
   border-radius:7px;padding:6px 8px;font-size:11px;
 }
 .table-actions button:hover{border-color:var(--gold);color:var(--ivory)}
+.table-actions .edit-action{
+  border-color:#59482e;
+  color:var(--gold-bright);
+  background:rgba(186,151,96,.1);
+}
+.inventory-help{
+  margin:14px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+.inventory-help strong{color:var(--gold-bright)}
 .empty{
   text-align:center;padding:64px 20px;color:var(--muted);
 }
@@ -477,7 +500,10 @@ tr:hover td{background:rgba(186,151,96,.035)}
     <aside class="panel form-panel" id="assetFormPanel">
       <div class="panel-head">
         <h3 id="formTitle">Register New Asset</h3>
-        <div class="small">Create an asset identity, location and technical record.</div>
+        <div class="small" id="formSubtitle">Create an asset identity, location and technical record.</div>
+      </div>
+      <div class="editing-banner" id="editingBanner">
+        Editing <strong id="editingAssetName"></strong>. Update any fields below, then save your changes.
       </div>
 
       <div class="form-section">Identity</div>
@@ -652,6 +678,7 @@ tr:hover td{background:rgba(186,151,96,.035)}
         </div>
         <div class="count-display"><span id="shownCount">0</span> records shown</div>
       </div>
+      <p class="inventory-help">To update an existing asset, choose <strong>Edit</strong> in its Actions column.</p>
 
       <div class="table-wrap">
         <table aria-label="HollowNet inventory">
@@ -789,6 +816,9 @@ function editItem(realIndex){
    "trigger","outputs","power","network","reportsTo","assetFolder","photoLinks","videoLinks",
    "wiringLinks","firmwareLinks","manualLinks","maintenanceLog","notes"].forEach(id => setVal(id,item[id]));
   el("formTitle").textContent = "Edit Asset Record";
+  el("formSubtitle").textContent = "Update this saved asset record and its documentation.";
+  el("editingAssetName").textContent = item.name;
+  el("editingBanner").style.display = "block";
   el("saveBtn").textContent = "Save Changes";
   el("cancelBtn").style.display = "inline-flex";
   el("assetFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
@@ -797,6 +827,9 @@ function cancelEdit(){
   editingIndex = null;
   clearForm();
   el("formTitle").textContent = "Register New Asset";
+  el("formSubtitle").textContent = "Create an asset identity, location and technical record.";
+  el("editingAssetName").textContent = "";
+  el("editingBanner").style.display = "none";
   el("saveBtn").textContent = "Add Asset";
   el("cancelBtn").style.display = "none";
   suggestIdPreview();
@@ -856,7 +889,7 @@ function render(){
       <td>${esc(item.controller || "—")}<span class="subtext">${esc(item.controllerId)}</span></td>
       <td><img class="qr-thumb" src="${qrURL(item.assetId,96)}" alt="QR for ${esc(item.assetId)}" onclick="openQRModal(${realIndex})"></td>
       <td><div class="table-actions">
-        <button onclick="editItem(${realIndex})">Edit</button>
+        <button class="edit-action" onclick="editItem(${realIndex})">Edit</button>
         <button onclick="openQRModal(${realIndex})">Label</button>
         <button onclick="downloadReadme(${realIndex})">README</button>
         <button onclick="duplicateItem(${realIndex})">Copy</button>
