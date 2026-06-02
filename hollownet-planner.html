@@ -456,6 +456,11 @@ tr:hover td{background:rgba(186,151,96,.035)}
 .detail-card h4{margin:0 0 7px;color:var(--gold-bright);font-family:Cinzel,serif;font-size:12px;letter-spacing:.1em}
 .detail-card strong{color:var(--text)}
 .detail-card a{display:block;overflow-wrap:anywhere;margin:2px 0}
+.media-list{display:grid;gap:10px;margin:7px 0 12px}
+.media-item{border:1px solid var(--line);border-radius:8px;background:#08080a;overflow:hidden}
+.media-item img,.media-item video,.media-item iframe{display:block;width:100%;max-height:320px;background:#050506;border:0;object-fit:contain}
+.media-item iframe{aspect-ratio:16/9;height:auto}
+.media-link{display:block;padding:8px 9px;font-size:11px;overflow-wrap:anywhere}
 .service-entry{border-top:1px solid var(--line);padding:9px 0 0;margin-top:9px}
 .service-entry:first-of-type{border-top:0;padding-top:0;margin-top:0}
 .service-form{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
@@ -872,6 +877,26 @@ function linkMarkup(value){
     return href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(link)}</a>` : `<div>${esc(link)}</div>`;
   }).join("") : "—";
 }
+function mediaMarkup(value,kind){
+  const values = lines(value);
+  if(!values.length) return "—";
+  return `<div class="media-list">${values.map(link => {
+    const href = /^https?:\/\//i.test(link) || /^(assets\/|\.?\.\/)/i.test(link) ? link : "";
+    if(!href) return `<div class="media-item"><span class="media-link">${esc(link)}</span></div>`;
+    const clean = href.split(/[?#]/)[0].toLowerCase();
+    const youtube = href.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/i);
+    if(kind === "photo"){
+      return `<div class="media-item"><a href="${esc(href)}" target="_blank" rel="noopener"><img src="${esc(href)}" alt="Asset photo" loading="lazy" onerror="this.closest('.media-item').classList.add('media-error');this.remove()"></a><a class="media-link" href="${esc(href)}" target="_blank" rel="noopener">Open photo</a></div>`;
+    }
+    if(kind === "video" && youtube){
+      return `<div class="media-item"><iframe src="https://www.youtube-nocookie.com/embed/${esc(youtube[1])}" title="Asset video" loading="lazy" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><a class="media-link" href="${esc(href)}" target="_blank" rel="noopener">Open video</a></div>`;
+    }
+    if(kind === "video" && /\.(mp4|webm|ogg|mov|m4v)$/.test(clean)){
+      return `<div class="media-item"><video src="${esc(href)}" controls preload="metadata"></video><a class="media-link" href="${esc(href)}" target="_blank" rel="noopener">Open video</a></div>`;
+    }
+    return `<div class="media-item"><a class="media-link" href="${esc(href)}" target="_blank" rel="noopener">${esc(href)}</a></div>`;
+  }).join("")}</div>`;
+}
 function dependencyMarkup(value){
   const values = lines(value);
   return values.length ? values.map(ref => {
@@ -1238,8 +1263,8 @@ function detailMarkup(item, allowService=true){
         <br><br><strong>Affects:</strong><br>${dependencyMarkup(item.affects)}
       </div>
       <div class="detail-card"><h4>Documents</h4>
-        <strong>Photos:</strong>${linkMarkup(item.photoLinks)}
-        <strong>Video:</strong>${linkMarkup(item.videoLinks)}
+        <strong>Photos:</strong>${mediaMarkup(item.photoLinks,"photo")}
+        <strong>Video:</strong>${mediaMarkup(item.videoLinks,"video")}
         <strong>Wiring:</strong>${linkMarkup(item.wiringLinks)}
         <strong>Manuals:</strong>${linkMarkup(item.manualLinks)}
         <strong>Firmware:</strong>${linkMarkup(item.firmwareLinks)}
