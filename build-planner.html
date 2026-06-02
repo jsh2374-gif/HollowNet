@@ -29,7 +29,7 @@ h1{margin:0 0 12px;font-size:clamp(25px,2.1vw,34px)}p{color:var(--muted);line-he
 input,select,textarea{width:100%;color:var(--text);background:#09090b;border:1px solid #302b28;border-radius:9px;padding:10px 11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(186,151,96,.12)}input::placeholder,textarea::placeholder{color:#605a53}textarea{resize:vertical;min-height:68px}.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.inline-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .mini{border:1px solid var(--line);background:#141316;color:var(--muted);padding:7px 9px;font-size:12px;border-radius:7px}.mini:hover{color:var(--ivory);border-color:var(--gold)}.form-actions{position:sticky;bottom:-20px;background:linear-gradient(0deg,#101012 82%,rgba(16,16,18,0));display:flex;gap:7px;flex-wrap:wrap;padding:18px 0 4px;margin-top:4px}
 .toolbar{display:grid;grid-template-columns:minmax(190px,1.8fr) repeat(4,minmax(130px,1fr));gap:9px;margin-bottom:12px}.actionbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:15px}.actionset{display:flex;gap:5px;flex-wrap:wrap}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}.card{border:1px solid var(--line);border-radius:14px;background:#0b0b0d;padding:14px;position:relative}.card h3{margin:0 0 7px;font-size:16px}.card-meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}.badge{display:inline-flex;align-items:center;border:1px solid #39322d;border-radius:99px;padding:4px 8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d5cbbd}.priority-Critical,.stage-Blocked{color:#f0b8af;border-color:#74322d;background:rgba(129,37,31,.18)}.priority-High{color:#efd49e;border-color:#72532e;background:rgba(186,151,96,.14)}.stage-Done{color:#b9d5c1;border-color:#3b5243;background:rgba(85,113,94,.23)}.stage-Building{color:#c5d4e1;border-color:#384a5d;background:rgba(83,106,130,.25)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}.card{border:1px solid var(--line);border-radius:14px;background:#0b0b0d;padding:14px;position:relative}.card h3{margin:0 0 7px;font-size:16px}.card-meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}.badge{display:inline-flex;align-items:center;border:1px solid #39322d;border-radius:99px;padding:4px 8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d5cbbd}.priority-Critical,.stage-Blocked{color:#f0b8af;border-color:#74322d;background:rgba(129,37,31,.18)}.priority-High{color:#efd49e;border-color:#72532e;background:rgba(186,151,96,.14)}.stage-Done{color:#b9d5c1;border-color:#3b5243;background:rgba(85,113,94,.23)}.stage-Building{color:#c5d4e1;border-color:#384a5d;background:rgba(83,106,130,.25)}.stage-From-Assets{color:var(--gold-bright);border-color:#59482e;background:rgba(186,151,96,.12)}
 .progress-track{height:12px;background:#151316;border:1px solid var(--line);border-radius:99px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:0}.materials{margin:12px 0 0;border-top:1px solid var(--line);padding-top:10px}.mat-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;padding:6px 0;border-bottom:1px solid #1d1a18}.mat-row:last-child{border-bottom:0}.mat-row.done span{text-decoration:line-through;color:#6f675d}.card-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}.card-actions button{border:1px solid var(--line);background:#151416;color:var(--muted);border-radius:7px;padding:6px 8px;font-size:11px}.card-actions button:hover{border-color:var(--gold);color:var(--ivory)}
 .empty{text-align:center;padding:64px 20px;color:var(--muted)}.empty strong{display:block;color:var(--ivory);font-family:Cinzel,serif;font-size:18px;letter-spacing:.07em;font-weight:500;margin-bottom:9px}.hint{margin:12px 0;padding:10px 12px;border:1px solid #59482e;border-radius:10px;background:rgba(186,151,96,.08);color:#cbbda8;font-size:12px;line-height:1.55}.hint strong{color:var(--gold-bright)}
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.74);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(560px,100%);background:#111114;border:1px solid var(--line-bright);border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.72);padding:23px}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px}.close-x{border:1px solid var(--line);background:none;color:var(--muted);border-radius:50%;height:32px;width:32px}
@@ -197,6 +197,7 @@ let editingIndex = null;
 let editingPassword = localStorage.getItem(EDIT_PASSWORD_KEY) || "";
 let materialDraft = [];
 let cloudPushTimer = null;
+const BUILD_ASSET_STATUSES = ["Planned"];
 
 function el(id){ return document.getElementById(id); }
 function val(id){ return el(id).value.trim(); }
@@ -205,6 +206,30 @@ function esc(str){ return String(str || "").replaceAll("&","&amp;").replaceAll("
 function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-Z0-9-_]/g,""); }
 function normalizeBuild(build){ return {...build, materials:Array.isArray(build.materials) ? build.materials : [], progress:Number(build.progress || 0)}; }
 function normalizeBuilds(){ builds = builds.map(normalizeBuild); }
+function assetNeedsBuild(asset){ return BUILD_ASSET_STATUSES.includes(asset.status); }
+function buildAssetIds(){ return new Set(builds.map(build => build.assetId).filter(Boolean)); }
+function assetToBuild(asset){
+  return {
+    id:`asset-${asset.assetId}`,
+    title:asset.name || asset.assetId,
+    assetId:asset.assetId,
+    zone:asset.zone || "Other",
+    priority:asset.criticality === "Critical" ? "Critical" : asset.criticality === "Important" ? "High" : "Normal",
+    stage:"Not Started",
+    dueDate:"",
+    progress:0,
+    materials:[],
+    notes:asset.notes || "",
+    derivedFromAsset:true,
+    createdAt:asset.createdAt || "",
+    updatedAt:asset.updatedAt || ""
+  };
+}
+function assetBuildCandidates(){
+  const linked = buildAssetIds();
+  return assets.filter(asset => assetNeedsBuild(asset) && !linked.has(asset.assetId)).map(assetToBuild);
+}
+function allBuildCards(){ return [...builds, ...assetBuildCandidates()]; }
 function scrollToForm(){ el("buildFormPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
 function updateProgressLabel(){ el("progressLabel").textContent = `${el("progress").value}%`; }
 function setStorageMark(message,state=""){ el("storageMark").textContent = message; el("storageMark").className = `storage-mark${state ? ` ${state}` : ""}`; }
@@ -261,6 +286,7 @@ async function loadAssets(){
     }
   }catch(error){ console.warn(error.message); }
   populateAssetSelect();
+  render();
 }
 function queueCloudPush(){
   if(!editingPassword) return;
@@ -306,6 +332,15 @@ function getFormBuild(){
   const now = new Date().toISOString();
   return {id:editingIndex === null ? `build-${Date.now()}` : builds[editingIndex].id,title:val("title"),assetId:val("assetId"),zone:val("zone"),priority:val("priority"),stage:val("stage"),dueDate:val("dueDate"),progress:Number(el("progress").value),materials:materialDraft,notes:val("notes"),createdAt:editingIndex === null ? now : builds[editingIndex].createdAt,updatedAt:now};
 }
+function ensureRealBuild(index){
+  const card = allBuildCards()[index];
+  if(!card) return -1;
+  if(!card.derivedFromAsset) return builds.findIndex(build => build.id === card.id);
+  const real = {...card, id:`build-${Date.now()}`, derivedFromAsset:false, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()};
+  builds.push(real);
+  localStorage.setItem(BUILD_STORAGE_KEY,JSON.stringify(builds));
+  return builds.length - 1;
+}
 function saveBuild(){
   if(!requireEditingPassword()) return;
   const build = getFormBuild();
@@ -316,7 +351,9 @@ function saveBuild(){
 }
 function editBuild(index){
   if(!requireEditingPassword()) return;
-  const build = builds[index]; editingIndex = index;
+  const realIndex = ensureRealBuild(index);
+  if(realIndex === -1) return;
+  const build = builds[realIndex]; editingIndex = realIndex;
   ["title","assetId","zone","priority","stage","dueDate","notes"].forEach(id => setVal(id,build[id]));
   el("progress").value = build.progress || 0; updateProgressLabel();
   materialDraft = JSON.parse(JSON.stringify(build.materials || [])); renderMaterialDraft();
@@ -324,25 +361,34 @@ function editBuild(index){
 }
 function duplicateBuild(index){
   if(!requireEditingPassword()) return;
-  const copy = JSON.parse(JSON.stringify(builds[index]));
+  const copy = JSON.parse(JSON.stringify(allBuildCards()[index]));
   copy.id = `build-${Date.now()}`; copy.title += " Copy"; copy.createdAt = copy.updatedAt = new Date().toISOString();
+  copy.derivedFromAsset = false;
   builds.push(copy); persist(); notify("Build copied.");
 }
 function deleteBuild(index){
   if(!requireEditingPassword()) return;
-  if(confirm(`Delete ${builds[index].title}?`)){ builds.splice(index,1); persist(); notify("Build removed."); }
+  const card = allBuildCards()[index];
+  if(!card) return;
+  if(card.derivedFromAsset){ alert("This item is coming from the Asset Planner. Change that asset status from Planned/Built, or choose Start Tracking to make it a full build item."); return; }
+  const realIndex = builds.findIndex(build => build.id === card.id);
+  if(realIndex !== -1 && confirm(`Delete ${builds[realIndex].title}?`)){ builds.splice(realIndex,1); persist(); notify("Build removed."); }
 }
 function toggleMaterial(buildIndex,matIndex){
   if(!requireEditingPassword()) return;
-  builds[buildIndex].materials[matIndex].done = !builds[buildIndex].materials[matIndex].done;
-  builds[buildIndex].updatedAt = new Date().toISOString();
+  const realIndex = ensureRealBuild(buildIndex);
+  if(realIndex === -1) return;
+  builds[realIndex].materials[matIndex].done = !builds[realIndex].materials[matIndex].done;
+  builds[realIndex].updatedAt = new Date().toISOString();
   persist();
 }
 function setStage(index,stage){
   if(!requireEditingPassword()) return;
-  builds[index].stage = stage;
-  if(stage === "Done") builds[index].progress = 100;
-  builds[index].updatedAt = new Date().toISOString();
+  const realIndex = ensureRealBuild(index);
+  if(realIndex === -1) return;
+  builds[realIndex].stage = stage;
+  if(stage === "Done") builds[realIndex].progress = 100;
+  builds[realIndex].updatedAt = new Date().toISOString();
   persist();
 }
 function persist(){ localStorage.setItem(BUILD_STORAGE_KEY,JSON.stringify(builds)); render(); queueCloudPush(); }
@@ -357,7 +403,7 @@ function priorityRank(priority){ return {Critical:0,High:1,Normal:2,Low:3}[prior
 function sortValue(build,sort){ return sort === "progress" ? Number(build.progress || 0) : String(build[sort] || ""); }
 function filteredBuilds(){
   const term = val("search").toLowerCase(), stage = val("filterStage"), zone = val("filterZone"), mats = val("filterMaterials"), sort = val("sortBy");
-  let list = builds.map((build,index) => ({build,index}));
+  let list = allBuildCards().map((build,index) => ({build,index}));
   if(term) list = list.filter(({build}) => JSON.stringify(build).toLowerCase().includes(term));
   if(stage) list = list.filter(({build}) => build.stage === stage);
   if(zone) list = list.filter(({build}) => build.zone === zone);
@@ -377,6 +423,7 @@ function render(){
       <div class="card-meta">
         <span class="badge priority-${cls(build.priority)}">${esc(build.priority)}</span>
         <span class="badge stage-${cls(build.stage)}">${esc(build.stage)}</span>
+        ${build.derivedFromAsset ? `<span class="badge stage-From-Assets">From Assets</span>` : ""}
         <span class="badge">${stats.done}/${stats.total} materials</span>
       </div>
       <div class="progress-track"><div class="progress-fill" style="width:${Number(build.progress || 0)}%"></div></div>
@@ -390,7 +437,7 @@ function render(){
       </div>
       ${build.notes ? `<p>${esc(build.notes).replaceAll("\n","<br>")}</p>` : ""}
       <div class="card-actions">
-        <button onclick="editBuild(${index})">Edit</button>
+        <button onclick="editBuild(${index})">${build.derivedFromAsset ? "Start Tracking" : "Edit"}</button>
         <button onclick="setStage(${index},'Done')">Mark Done</button>
         <button onclick="duplicateBuild(${index})">Copy</button>
         <button onclick="deleteBuild(${index})">Delete</button>
@@ -399,15 +446,18 @@ function render(){
   }).join("");
   el("emptyState").style.display = list.length ? "none" : "block";
   el("shownCount").textContent = list.length;
-  el("totalCount").textContent = builds.length;
-  el("todoCount").textContent = builds.filter(build => build.stage === "Not Started").length;
-  el("buildingCount").textContent = builds.filter(build => ["Parts Gathering","Building","Testing"].includes(build.stage)).length;
-  el("blockedCount").textContent = builds.filter(build => build.stage === "Blocked").length;
-  el("doneCount").textContent = builds.filter(build => build.stage === "Done").length;
-  el("materialCount").textContent = builds.reduce((sum,build) => sum + materialStats(build).left,0);
-  const blocked = builds.filter(build => build.stage === "Blocked").length;
-  const critical = builds.filter(build => build.priority === "Critical" && build.stage !== "Done").length;
-  el("buildHint").innerHTML = `<strong>Build focus:</strong> ${critical} critical build${critical === 1 ? "" : "s"} still open. ${blocked} build${blocked === 1 ? "" : "s"} blocked. ${builds.reduce((sum,build) => sum + materialStats(build).left,0)} material line item${builds.reduce((sum,build) => sum + materialStats(build).left,0) === 1 ? "" : "s"} remain unchecked.`;
+  const cards = allBuildCards();
+  el("totalCount").textContent = cards.length;
+  el("todoCount").textContent = cards.filter(build => build.stage === "Not Started").length;
+  el("buildingCount").textContent = cards.filter(build => ["Parts Gathering","Building","Testing"].includes(build.stage)).length;
+  el("blockedCount").textContent = cards.filter(build => build.stage === "Blocked").length;
+  el("doneCount").textContent = cards.filter(build => build.stage === "Done").length;
+  const materialLeft = cards.reduce((sum,build) => sum + materialStats(build).left,0);
+  el("materialCount").textContent = materialLeft;
+  const blocked = cards.filter(build => build.stage === "Blocked").length;
+  const critical = cards.filter(build => build.priority === "Critical" && build.stage !== "Done").length;
+  const candidates = cards.filter(build => build.derivedFromAsset).length;
+  el("buildHint").innerHTML = `<strong>Build focus:</strong> ${critical} critical build${critical === 1 ? "" : "s"} still open. ${blocked} build${blocked === 1 ? "" : "s"} blocked. ${materialLeft} material line item${materialLeft === 1 ? "" : "s"} remain unchecked. ${candidates} item${candidates === 1 ? "" : "s"} are being pulled from asset statuses.`;
 }
 function exportJSON(){ download("hollownet_build_planner_backup.json",JSON.stringify(builds,null,2),"application/json"); }
 function importJSON(){ if(!requireEditingPassword()) return; el("importFile").click(); }
