@@ -66,7 +66,7 @@ Parent: `HNA-26-CTL-006` Upper House Zone Controller, planned and controlled by 
 
 | Scene / room | Existing and planned assets | Current control | Recommended next step |
 | --- | --- | --- | --- |
-| First Room | `HNA-26-SCN-001` Mrs. Grimm — Installed | Reports to Room Controller | Use `HNA-26-CTL-011` First Room Controller, which reports to `CTL-006`. Document the Pi's scene start, stop, ready and fault signals. |
+| First Room | `HNA-26-SCN-001` Mrs. Grimm — Installed | **Confirmed:** Pi 4 is both scene and First Room controller; doorbell button starts the complete 45-second lighting/audio/bass-shaker scene; automatic reset returns it to ready | Report directly to `CTL-006`; retire duplicate planned `CTL-011`. Hub shows Pi online plus ready/running/fault status and provides scene test and reset. Document Pi program startup and active-scene button re-trigger behavior. |
 | Reception Room | `HNA-26-SCN-002` Living Portrait — Installed | BooBox, Local Only | Keep BooBox local operation. Add an enable/test/status interface to `CTL-006` before considering another room controller. |
 | Stair Hall | `HNA-26-ACT-001` Stair Hall Ghost and `HNA-26-ANM-005` Filing Cabinet — Installed | Separate local controllers | Strong room-controller candidate if the ghost, cabinet and Storm must sequence together. Review actor trigger ownership first. |
 | Stair Hall through Grand Hall | `HNA-26-PRJ-003` Storm — Installed | Media Player, Local Only | Decide whether Storm belongs to a future Stair Hall controller, Grand Hall controller or directly to `CTL-006`; avoid assigning it to two rooms. |

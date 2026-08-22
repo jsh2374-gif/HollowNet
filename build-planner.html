@@ -216,6 +216,10 @@ async function mergeNativeAssets(){
   }));
   const incoming = payloads.flatMap(payload => Array.isArray(payload) ? payload : payload.items || []);
   const updates = payloads.flatMap(payload => Array.isArray(payload?.updates) ? payload.updates : []);
+  const retiredIds = new Set(payloads.flatMap(payload => Array.isArray(payload?.retiredAssetIds) ? payload.retiredAssetIds : []));
+  const beforeRetirement = assets.length;
+  if(retiredIds.size) assets = assets.filter(asset => !retiredIds.has(asset.assetId));
+  const retired = beforeRetirement - assets.length;
   const knownIds = new Set(assets.map(asset => asset.assetId));
   const additions = incoming.filter(asset => asset.assetId && asset.name && !knownIds.has(asset.assetId));
   assets.push(...additions);
@@ -238,7 +242,7 @@ async function mergeNativeAssets(){
     });
     if(changed) updated++;
   });
-  return additions.length + updated;
+  return additions.length + updated + retired;
 }
 async function showNativeAssetsImmediately(){
   try{

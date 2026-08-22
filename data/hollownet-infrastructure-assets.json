@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "kind": "hollownet-infrastructure-asset-pack",
   "createdAt": "2026-08-22T14:00:00.000Z",
+  "retiredAssetIds": ["HNA-26-CTL-011"],
   "items": [
     {
       "name": "HollowNet Main Hub",
@@ -98,10 +99,10 @@
       "room": "Upper House Zone Control",
       "type": "Controller",
       "zone": "Upper House",
-      "notes": "Planned zone boundary for the First Room through Grand Hall. Multi-effect rooms will be evaluated individually before additional room controllers are created.",
+      "notes": "Planned zone boundary for the First Room through Grand Hall. Mrs. Grimm acts as its own First Room scene/room controller and reports directly to this zone controller.",
       "power": "TBD",
       "status": "Planned",
-      "affects": "HNA-26-CTL-011",
+      "affects": "HNA-26-SCN-001",
       "assetId": "HNA-26-CTL-006",
       "network": "Ethernet / Wi-Fi uplink; field network — TBD",
       "outputs": "Zone commands, status aggregation, service controls",
@@ -244,36 +245,6 @@
       "serviceHistory": []
     },
     {
-      "name": "First Room Controller",
-      "room": "First Room",
-      "type": "Controller",
-      "zone": "Upper House",
-      "notes": "Planned room-controller identity for Mrs. Grimm. Added because the existing scene record already reports to a Room Controller.",
-      "power": "TBD",
-      "status": "Planned",
-      "affects": "HNA-26-SCN-001",
-      "assetId": "HNA-26-CTL-011",
-      "network": "Zone uplink / local scene network — TBD",
-      "outputs": "Room scene commands, status and service test",
-      "trigger": "Upper House Zone Controller / local service",
-      "createdAt": "2026-08-22T14:00:00.000Z",
-      "reportsTo": "Zone Controller",
-      "updatedAt": "2026-08-22T14:00:00.000Z",
-      "controller": "ESP32 / Raspberry Pi — TBD",
-      "inspection": "Ready",
-      "photoLinks": "",
-      "videoLinks": "",
-      "assetFolder": "HollowNet Assets/HNA-26-CTL-011 - First Room Controller",
-      "criticality": "Important",
-      "manualLinks": "",
-      "wiringLinks": "",
-      "controlledBy": "HNA-26-CTL-006",
-      "controllerId": "",
-      "firmwareLinks": "",
-      "maintenanceLog": "",
-      "serviceHistory": []
-    },
-    {
       "name": "Pantry Room Controller",
       "room": "Pantry",
       "type": "Controller",
@@ -398,7 +369,6 @@
     {"assetId": "HNA-26-CTL-001", "controlledBy": "HNA-26-CTL-003"},
     {"assetId": "HNA-26-CTL-002", "controlledBy": "HNA-26-CTL-004"},
     {"assetId": "HNA-26-PRJ-001", "controlledBy": "HNA-26-CTL-004"},
-    {"assetId": "HNA-26-SCN-001", "controlledBy": "HNA-26-CTL-011"},
     {"assetId": "HNA-26-VID-002", "controlledBy": "HNA-26-CTL-012"},
     {"assetId": "HNA-26-VID-003", "controlledBy": "HNA-26-CTL-012"},
     {"assetId": "HNA-26-SCN-005", "controlledBy": "HNA-26-CTL-013"},
@@ -535,6 +505,29 @@
         "affects": "HNA-26-ANM-004",
         "outputs": "Front House commands, status aggregation and service controls; Suit of Armor enable/test/control",
         "notes": "Front House zone boundary for Facade Windows, Front Porch and Reception Room. The Suit of Armor is the first planned connected field node and reports online/status/fault data while accepting Hub enable, disable, movement-test and scene-control commands. Facade Windows and the Rocking Chair remain local."
+      }
+    },
+    {
+      "assetId": "HNA-26-SCN-001",
+      "confirmedAt": "2026-08-22T18:25:00.000Z",
+      "fields": {
+        "power": "5 V DC Raspberry Pi 4; connected scene hardware supplies — TBD",
+        "outputs": "45-second coordinated lighting, audio and bass-shaker scene",
+        "trigger": "Doorbell button pressed as group enters",
+        "controller": "Raspberry Pi 4; also serves as First Room Controller",
+        "network": "Wi-Fi to Upper House Zone Controller",
+        "reportsTo": "Zone Controller",
+        "controlledBy": "HNA-26-CTL-006",
+        "notes": "Confirmed walkthrough: Mrs. Grimm is both the First Room scene and its room controller; no separate CTL-011 hardware is required. A doorbell button pressed as the group enters starts the complete coordinated lighting, audio and bass-shaker scene. The sequence lasts 45 seconds, then automatically resets and returns to ready. The Hub must show Pi online/status plus ready, running and fault state and provide scene test and reset controls. Pi program startup behavior and button re-trigger behavior during an active scene remain to be documented."
+      }
+    },
+    {
+      "assetId": "HNA-26-CTL-006",
+      "confirmedAt": "2026-08-22T18:25:00.000Z",
+      "fields": {
+        "affects": "HNA-26-SCN-001",
+        "outputs": "Upper House commands, status aggregation and service controls; Mrs. Grimm test/reset/status",
+        "notes": "Upper House zone boundary for the First Room through Grand Hall. Mrs. Grimm is the First Room scene/room controller and reports directly to this zone controller; the duplicate planned CTL-011 record is retired."
       }
     }
   ]
