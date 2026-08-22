@@ -547,16 +547,16 @@
     },
     {
       "assetId": "HNA-26-ACT-001",
-      "confirmedAt": "2026-08-22T19:25:00.000Z",
+      "confirmedAt": "2026-08-22T19:35:00.000Z",
       "fields": {
         "power": "5 V DC Raspberry Pi; monitor/audio supplies — TBD",
         "outputs": "Stair Hall Ghost monitor and audio",
-        "trigger": "Actor button press starts 35-second scene; reset behavior — TBD",
+        "trigger": "Program auto-starts with power; actor button starts 35-second scene when ready; additional presses are ignored while running; automatic reset returns scene to ready",
         "controller": "Local Raspberry Pi",
         "network": "None — completely local operation",
         "reportsTo": "Local Only",
         "controlledBy": "",
-        "notes": "Confirmed walkthrough: Stair Hall Ghost operates independently from the Filing Cabinet and Storm systems. An actor button press triggers its local Raspberry Pi monitor/audio effect for 35 seconds. It remains completely local with no Hub operational control. Program startup, automatic reset and active-scene re-trigger behavior remain to be documented."
+        "notes": "Confirmed walkthrough: Stair Hall Ghost operates independently from the Filing Cabinet and Storm systems. Its local Raspberry Pi program starts automatically with power. An actor button press starts the monitor/audio effect for 35 seconds when the scene is ready; additional button presses are ignored while it is running. At the end of the sequence, the controller resets automatically and returns to ready. It remains completely local with no Hub operational control."
       }
     },
     {
