@@ -36,7 +36,9 @@ The additive pack at `data/hollownet-native-assets.json` contains:
 | `HNA-26-ANM-013` | Bog Coffin Skeleton | Bog | Controlled by `HNA-26-CTL-001` |
 | `HNA-26-ANM-014` | Bog Stake Skeleton | Bog | Controlled by `HNA-26-CTL-001` |
 
-Choose **Add Native Asset Pack** in the asset planner to register only missing records. The action never replaces an existing record or an existing matching Asset ID. With editing unlocked, additions are saved locally and queued for the existing cloud-sync path.
+The planner automatically overlays missing records from the native asset pack after loading the shared workspace, so all seven assets are immediately visible without editing access. Existing records and matching Asset IDs always win and are never replaced.
+
+To make the additions permanent in the Supabase-backed shared workspace, unlock editing and choose **Save Native Assets to Cloud**. The normal cloud-sync path then saves the combined registry.
 
 `data/hollownet-planner-backup-2026-08-22.json` is the uploaded 31-record planner backup plus these seven records. It contains 38 unique Asset IDs and is retained as the complete migration snapshot.
 

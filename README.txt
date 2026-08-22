@@ -16,9 +16,9 @@ How to open:
 4. Export JSON backups before moving to a different computer/browser.
 
 HollowNet-native setup:
-1. Open the Asset Planner and unlock editing through Cloud Sync.
-2. Choose "Add Native Asset Pack" to add the Haunted Radio, Queue controller, Bog controller and four Bog animatronics.
-3. Existing records and matching Asset IDs are never replaced by the pack.
+1. Open the Asset Planner. The Haunted Radio, Queue controller, Bog controller and four Bog animatronics appear automatically alongside shared assets.
+2. Existing records and matching Asset IDs are never replaced by the pack.
+3. To make the additions permanent in the shared database, unlock editing through Cloud Sync and choose "Save Native Assets to Cloud".
 4. Use an asset's Label action to print either its physical asset label or its controller-box label.
 
 See HOLLOWNET-NATIVE-ASSETS.md for the ID, relationship and labeling standard.

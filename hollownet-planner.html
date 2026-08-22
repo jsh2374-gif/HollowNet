@@ -746,7 +746,7 @@ body.asset-view .shell{display:none}
           <button class="btn" onclick="exportJSON()">Export JSON</button>
           <button class="btn" onclick="exportCSV()">Export CSV</button>
           <button class="btn" onclick="importJSON()">Import</button>
-          <button class="btn" onclick="installNativeAssetPack()">Add Native Asset Pack</button>
+          <button class="btn" onclick="installNativeAssetPack()">Save Native Assets to Cloud</button>
           <button class="btn" onclick="printLabels()">Print Labels</button>
           <button class="btn" onclick="exportAllReadmes()">Export READMEs</button>
           <button class="btn danger" onclick="clearAll()">Clear All</button>
@@ -891,6 +891,17 @@ function normalizeItem(item){
     affects:item.affects || "", serviceHistory:Array.isArray(item.serviceHistory) ? item.serviceHistory : []};
 }
 function normalizeItems(){ items = items.map(normalizeItem); }
+async function mergeNativeAssets(){
+  const response = await fetch("data/hollownet-native-assets.json",{cache:"no-store"});
+  if(!response.ok) throw new Error(`HollowNet-native assets could not be loaded (${response.status}).`);
+  const payload = await response.json();
+  const incoming = Array.isArray(payload) ? payload : payload.items;
+  if(!Array.isArray(incoming)) throw new Error("The HollowNet-native asset pack is invalid.");
+  const knownIds = new Set(items.map(item => item.assetId));
+  const additions = incoming.filter(item => item.assetId && item.name && !knownIds.has(item.assetId)).map(normalizeItem);
+  items.push(...additions);
+  return additions.length;
+}
 function appURL(assetId=""){
   const url = new URL(window.location.href);
   url.search = "";
@@ -1090,11 +1101,12 @@ async function pullCloud(){
     if(!Array.isArray(incoming)) throw new Error("The cloud workspace returned invalid asset data.");
     items = incoming;
     normalizeItems();
+    const added = await mergeNativeAssets();
     localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
     render();
     cancelEdit();
     closeCloudModal();
-    notify("Shared assets loaded.");
+    notify(added ? `Shared assets loaded with ${added} HollowNet-native additions.` : "Shared assets loaded.");
   }catch(error){ setStorageMark("Cloud sync needs attention","error"); alert(error.message); }
 }
 async function loadSharedAssets(){
@@ -1102,16 +1114,22 @@ async function loadSharedAssets(){
     const incoming = await cloudRequest(null);
     if(incoming === null){
       setStorageMark("Shared workspace ready · push local assets to initialize","cloud");
-      return;
+    }else{
+      if(!Array.isArray(incoming)) throw new Error("The shared workspace returned invalid asset data.");
+      items = incoming;
+      normalizeItems();
     }
-    if(!Array.isArray(incoming)) throw new Error("The shared workspace returned invalid asset data.");
-    items = incoming;
-    normalizeItems();
+    const added = await mergeNativeAssets();
     localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
     render();
+    if(added) setStorageMark(`Shared assets + ${added} HollowNet-native additions`,"cloud");
   }catch(error){
     setStorageMark("Shared assets unavailable · using local copy","error");
     console.warn(error.message);
+    try{
+      const added = await mergeNativeAssets();
+      if(added){ localStorage.setItem("hollownetPlannerItems", JSON.stringify(items)); render(); }
+    }catch(packError){ console.warn(packError.message); }
   }
 }
 
@@ -1500,19 +1518,11 @@ function importJSON(){
 }
 async function installNativeAssetPack(){
   if(!requireEditingPassword()) return;
-  if(!confirm("Add the Haunted Radio, Queue controller and Bog framework records? Existing records and matching Asset IDs will not be changed.")) return;
+  if(!confirm("Save the Haunted Radio, Queue controller and Bog framework records to the shared cloud workspace? Existing records and matching Asset IDs will not be changed.")) return;
   try{
-    const response = await fetch("data/hollownet-native-assets.json",{cache:"no-store"});
-    if(!response.ok) throw new Error(`Asset pack could not be loaded (${response.status}).`);
-    const payload = await response.json();
-    const incoming = Array.isArray(payload) ? payload : payload.items;
-    if(!Array.isArray(incoming)) throw new Error("The HollowNet-native asset pack is invalid.");
-    const knownIds = new Set(items.map(item => item.assetId));
-    const additions = incoming.filter(item => item.assetId && item.name && !knownIds.has(item.assetId)).map(normalizeItem);
-    if(!additions.length){ notify("The HollowNet-native assets are already registered."); return; }
-    items.push(...additions);
+    const additions = await mergeNativeAssets();
     persist();
-    notify(`${additions.length} HollowNet-native asset${additions.length === 1 ? "" : "s"} registered.`);
+    notify(additions ? `${additions} HollowNet-native asset${additions === 1 ? "" : "s"} added and queued for cloud sync.` : "HollowNet-native assets queued for cloud sync.");
   }catch(error){ alert(error.message); }
 }
 function handleImport(event){

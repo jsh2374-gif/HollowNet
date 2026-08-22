@@ -206,6 +206,17 @@ function esc(str){ return String(str || "").replaceAll("&","&amp;").replaceAll("
 function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-Z0-9-_]/g,""); }
 function normalizeBuild(build){ return {...build, materials:Array.isArray(build.materials) ? build.materials : [], progress:Number(build.progress || 0)}; }
 function normalizeBuilds(){ builds = builds.map(normalizeBuild); }
+async function mergeNativeAssets(){
+  const response = await fetch("data/hollownet-native-assets.json",{cache:"no-store"});
+  if(!response.ok) throw new Error(`HollowNet-native assets could not be loaded (${response.status}).`);
+  const payload = await response.json();
+  const incoming = Array.isArray(payload) ? payload : payload.items;
+  if(!Array.isArray(incoming)) throw new Error("The HollowNet-native asset pack is invalid.");
+  const knownIds = new Set(assets.map(asset => asset.assetId));
+  const additions = incoming.filter(asset => asset.assetId && asset.name && !knownIds.has(asset.assetId));
+  assets.push(...additions);
+  return additions.length;
+}
 function assetNeedsBuild(asset){ return BUILD_ASSET_STATUSES.includes(asset.status); }
 function buildAssetIds(){ return new Set(builds.map(build => build.assetId).filter(Boolean)); }
 function assetToBuild(asset){
@@ -284,6 +295,10 @@ async function loadAssets(){
       const incoming = await response.json();
       if(Array.isArray(incoming)){ assets = incoming; localStorage.setItem(ASSET_STORAGE_KEY,JSON.stringify(assets)); }
     }
+  }catch(error){ console.warn(error.message); }
+  try{
+    const added = await mergeNativeAssets();
+    if(added) localStorage.setItem(ASSET_STORAGE_KEY,JSON.stringify(assets));
   }catch(error){ console.warn(error.message); }
   populateAssetSelect();
   render();
