@@ -633,6 +633,36 @@
         "maintenanceLog": "HollowNet maintenance record required: log date, operator, Pepper's Ghost reflective surface, dedicated light, 12 V motor, movement linkage, mounting, repairs and notes. No service events are recorded yet.",
         "notes": "Confirmed walkthrough: the Back Hall Ghost is a Pepper's Ghost illusion illuminated by a dedicated light. A 12 V motor provides slight continuous movement to the ghost. One local master switch turns the light and motor on together; they are not switched separately, and the motor runs continuously while powered. The effect remains completely local with no Hub operational control. The light voltage and motor mechanism remain to be documented."
       }
+    },
+    {
+      "assetId": "HNA-26-SCN-004",
+      "confirmedAt": "2026-08-22T20:40:00.000Z",
+      "fields": {
+        "power": "5 V DC Raspberry Pi; TV and scene-lighting supplies — details TBD",
+        "outputs": "Gallery lighting blackout and restore; Mrs. Grimm TV video behind mirror; cue for Grand Hall actor to slide bookcase open",
+        "trigger": "Actress behind mirror presses local button to start 30-second scene; actress manually resets after every run",
+        "controller": "Local Raspberry Pi scene controller",
+        "network": "Wi-Fi — local operation; no Hub operational control confirmed",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, trigger button, Raspberry Pi, TV/video playback, mirror, blackout/restore lighting, Grand Hall actor cue, manual reset, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: Gallery Mirror and George operate separately. For the 30-second Gallery Mirror scene, the actress behind the mirror presses a local button, the Gallery lights go out, and a Mrs. Grimm video plays on the TV behind the mirror. The lights restore at the end, and the actress manually resets the scene for the next group. The scene also cues the Grand Hall actor to slide the bookcase open. The cue timing and communication method, program startup, power distribution and active-scene button behavior remain to be documented."
+      }
+    },
+    {
+      "assetId": "HNA-26-OTH-001",
+      "confirmedAt": "2026-08-22T20:42:00.000Z",
+      "fields": {
+        "power": "Passive puppet; microphone/voice-distortion system power — TBD if used",
+        "outputs": "Occasional live puppet performance; existing microphone with voice distortion — use to be confirmed",
+        "trigger": "Manually operated by actor when staffed; seldom used",
+        "controller": "Live puppeteer",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, George puppet body and controls, mounting, microphone/voice-distortion equipment if used, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: George is currently a manually operated puppet, is seldom used and operates separately from the Gallery Mirror scene. No actuator, room controller or Hub connection is required. Confirm whether the existing microphone and voice-distortion equipment are still used when George is staffed."
+      }
     }
   ]
 }
