@@ -484,6 +484,21 @@
         "maintenanceLog": "HollowNet maintenance record required: log date, operator, pump/filter/nozzle/valve inspection or service, leaks, repairs, winterization, recommissioning and notes. No service events are recorded yet.",
         "notes": "Confirmed walkthrough: one large Arizona Mist machine in the Tech Shed serves the property. Distribution lines branch to the Bridge, Furnace Room, Bog and Graveyard. The Furnace Room branch has two valves that simulate steam escaping through pipes. The machine starts from a manual switch and remains completely local; the Main Hub provides documentation only, including reference material, maintenance history and notes. Attach the exact model, manual, plumbing map, valve labels and service instructions when available."
       }
+    },
+    {
+      "assetId": "HNA-26-PRJ-002",
+      "confirmedAt": "2026-08-22T17:27:00.000Z",
+      "fields": {
+        "room": "Facade Windows",
+        "power": "Three to four 120 V AC projectors; media-player supply — TBD",
+        "outputs": "Three to four silent window projections; no audio",
+        "trigger": "Local power; automatic media-loop startup desired",
+        "controller": "Local media player — TBD",
+        "network": "None — planned local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "notes": "Confirmed walkthrough: Facade Windows is a separate planned projection scene from Mia & Roy. It will use approximately three to four projectors, remain completely local and have no audio. The desired behavior is for the media player and projection loop to start automatically when powered. Final projector count/models, player architecture, synchronization and automatic projector startup method remain TBD."
+      }
     }
   ]
 }
