@@ -544,6 +544,50 @@
         "maintenanceLog": "HollowNet maintenance record required: log date, operator, actor button, BooBox, TV monitor, fan and audio inspection/service, repairs and notes. No service events are recorded yet.",
         "notes": "Confirmed walkthrough: one actor-button press starts the complete Living Portrait scene—TV monitor, fan and audio together. The sequence runs for 30 seconds, then automatically resets. The BooBox remains the local controller. HollowNet provides documentation, reference material, notes and maintenance history only; no Hub operational controls or live status are required. Active-scene button re-trigger behavior remains to be documented."
       }
+    },
+    {
+      "assetId": "HNA-26-ACT-001",
+      "confirmedAt": "2026-08-22T19:10:00.000Z",
+      "fields": {
+        "power": "5 V DC Raspberry Pi; monitor/audio supplies — TBD",
+        "outputs": "Stair Hall Ghost monitor and audio",
+        "trigger": "Actor button press; duration/reset behavior — TBD",
+        "controller": "Local Raspberry Pi",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "notes": "Confirmed walkthrough: Stair Hall Ghost operates independently from the Filing Cabinet and Storm systems. An actor button press triggers its local Raspberry Pi monitor/audio effect. It remains completely local with no Hub operational control. Program startup, sequence duration, automatic reset and active-scene re-trigger behavior remain to be documented."
+      }
+    },
+    {
+      "assetId": "HNA-26-ANM-005",
+      "confirmedAt": "2026-08-22T19:10:00.000Z",
+      "fields": {
+        "power": "12 V DC controls; compressed air — pressure TBD",
+        "outputs": "Pneumatic cabinet open/close; pneumatic file pop-up",
+        "trigger": "Local switch commands cabinet open/close; under-rug trundle switch makes file pop up",
+        "controller": "Local Gilderfluke controller",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, Gilderfluke controller, switches, pneumatic pressure/valves/lines, cabinet mechanism, file pop-up, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: Filing Cabinet operates independently from Stair Hall Ghost and Storm. A local switch commands the cabinet open and closed; a separate trundle switch under the rug triggers the file pop-up. The Gilderfluke and pneumatics remain completely local with no Hub operational control."
+      }
+    },
+    {
+      "assetId": "HNA-26-PRJ-003",
+      "confirmedAt": "2026-08-22T19:10:00.000Z",
+      "fields": {
+        "room": "Stair Hall / Sitting Room / Library / Gallery / Grand Hall",
+        "power": "Distributed projector, TV-monitor and media-player supplies — details TBD",
+        "outputs": "Distributed Storm projections on projectors and TV monitors",
+        "trigger": "Continuous local media loop; power/start behavior — TBD",
+        "controller": "Local media player system — details TBD",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "notes": "Confirmed walkthrough: Storm is an independent distributed projection system spanning Stair Hall, Sitting Room, Library, Gallery and Grand Hall. It does not synchronize with Stair Hall Ghost or Filing Cabinet and remains completely local with no Hub operational control. Exact players, display map, synchronization, loop length and automatic startup behavior remain to be documented."
+      }
     }
   ]
 }
