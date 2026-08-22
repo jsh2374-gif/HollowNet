@@ -362,6 +362,36 @@
       "firmwareLinks": "",
       "maintenanceLog": "",
       "serviceHistory": []
+    },
+    {
+      "name": "Bridge/Fountain SimFlame Controller",
+      "room": "Bridge/Fountain",
+      "type": "Controller",
+      "zone": "Exterior Grounds",
+      "notes": "Existing local lighting controller for the Bridge/Fountain jack-o-lanterns. The SimFlame LV unit supplies three independent 12 V AC flicker circuits. Manual fallback and Main Hub integration remain to be confirmed.",
+      "power": "Three 12 V AC lighting circuits; SimFlame LV input supply — TBD",
+      "status": "Built",
+      "affects": "HNA-26-LGT-001",
+      "assetId": "HNA-26-CTL-015",
+      "network": "None — existing local controller",
+      "outputs": "Three 12 V AC flicker-lighting circuits",
+      "trigger": "SimFlame LV programmed flicker; enable method — TBD",
+      "createdAt": "2026-08-22T14:35:00.000Z",
+      "reportsTo": "Local Only",
+      "updatedAt": "2026-08-22T14:35:00.000Z",
+      "controller": "SimFlame LV unit",
+      "inspection": "Ready",
+      "photoLinks": "",
+      "videoLinks": "",
+      "assetFolder": "HollowNet Assets/HNA-26-CTL-015 - Bridge-Fountain SimFlame Controller",
+      "criticality": "Decorative",
+      "manualLinks": "",
+      "wiringLinks": "",
+      "controlledBy": "",
+      "controllerId": "",
+      "firmwareLinks": "",
+      "maintenanceLog": "",
+      "serviceHistory": []
     }
   ],
   "updates": [
@@ -384,6 +414,20 @@
         "reportsTo": "Room Controller",
         "controlledBy": "HNA-26-CTL-014",
         "notes": "Confirmed walkthrough: gate motion is pneumatic. The current actor switch triggers motion and audio together and remains the local fallback. Main Hub remote enable, test and emergency stop are required. Emergency stop must de-energize the valve; final pneumatic vent/hold behavior and sensing must be validated before operation."
+      }
+    },
+    {
+      "assetId": "HNA-26-LGT-001",
+      "confirmedAt": "2026-08-22T14:35:00.000Z",
+      "fields": {
+        "power": "Three 12 V AC circuits from SimFlame LV unit",
+        "outputs": "4 W wedge bulbs; three flicker-lighting circuits",
+        "trigger": "SimFlame LV flicker pattern",
+        "controller": "SimFlame LV unit",
+        "network": "None — existing local control",
+        "reportsTo": "Local Controller",
+        "controlledBy": "HNA-26-CTL-015",
+        "notes": "Confirmed walkthrough: the Bridge/Fountain jack-o-lanterns are divided across three 12 V AC flicker circuits driven by an existing SimFlame LV unit. Manual fallback and Main Hub control requirements remain to be confirmed."
       }
     }
   ]

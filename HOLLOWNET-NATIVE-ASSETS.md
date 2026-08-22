@@ -36,13 +36,13 @@ The additive pack at `data/hollownet-native-assets.json` contains:
 | `HNA-26-ANM-013` | Bog Coffin Skeleton | Bog | Controlled by `HNA-26-CTL-001` |
 | `HNA-26-ANM-014` | Bog Stake Skeleton | Bog | Controlled by `HNA-26-CTL-001` |
 
-The infrastructure pack at `data/hollownet-infrastructure-assets.json` adds `HNA-26-CTL-003` through `HNA-26-CTL-014`: the Main Hub, seven additional zone controllers, the First Room, Pantry and Furnace Room controllers already implied by existing records, and the confirmed Front Gate Controller.
+The infrastructure pack at `data/hollownet-infrastructure-assets.json` adds `HNA-26-CTL-003` through `HNA-26-CTL-015`: the Main Hub, seven additional zone controllers, the First Room, Pantry and Furnace Room controllers already implied by existing records, the Front Gate Controller, and the existing Bridge/Fountain SimFlame Controller.
 
 The planner automatically overlays missing records from both packs, fills missing controller links and applies timestamped walkthrough decisions, so the complete control map is immediately visible without editing access. A newer user edit always wins over a confirmed walkthrough update.
 
 To make the additions permanent in the Supabase-backed shared workspace, unlock editing and choose **Save Control Map to Cloud**. The normal cloud-sync path then saves the combined registry.
 
-`data/hollownet-planner-backup-2026-08-22.json` is the uploaded 31-record planner backup plus both asset packs. It contains 50 unique Asset IDs and is retained as the complete migration snapshot.
+`data/hollownet-planner-backup-2026-08-22.json` is the uploaded 31-record planner backup plus both asset packs. It contains 51 unique Asset IDs and is retained as the complete migration snapshot.
 
 ## Hierarchy
 
@@ -70,3 +70,5 @@ HNA-26-CTL-003 HollowNet Main Hub
 ```
 
 See `HOLLOWNET-SCENE-WALKTHROUGH.md` for the room-by-room review and the recommended controller decisions that remain open.
+
+The built `HNA-26-CTL-015` Bridge/Fountain SimFlame Controller currently remains local and controls `HNA-26-LGT-001`. It will be placed under `HNA-26-CTL-004` only if remote HollowNet control is confirmed during the walkthrough.
