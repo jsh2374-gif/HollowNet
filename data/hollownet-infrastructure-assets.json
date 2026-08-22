@@ -368,7 +368,7 @@
       "room": "Bridge/Fountain",
       "type": "Controller",
       "zone": "Exterior Grounds",
-      "notes": "Existing local lighting controller for the Bridge/Fountain jack-o-lanterns. The SimFlame LV unit supplies three independent 12 V AC flicker circuits. Manual fallback and Main Hub integration remain to be confirmed.",
+      "notes": "Existing local lighting controller for the Bridge/Fountain jack-o-lanterns. The SimFlame LV unit supplies three 12 V AC flicker circuits. Manual fallback and Main Hub integration remain to be confirmed.",
       "power": "Three 12 V AC lighting circuits; SimFlame LV input supply — TBD",
       "status": "Built",
       "affects": "HNA-26-LGT-001",
