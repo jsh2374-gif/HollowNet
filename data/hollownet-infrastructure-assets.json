@@ -529,6 +529,21 @@
         "outputs": "Upper House commands, status aggregation and service controls; Mrs. Grimm test/reset/status",
         "notes": "Upper House zone boundary for the First Room through Grand Hall. Mrs. Grimm is the First Room scene/room controller and reports directly to this zone controller; the duplicate planned CTL-011 record is retired."
       }
+    },
+    {
+      "assetId": "HNA-26-SCN-002",
+      "confirmedAt": "2026-08-22T18:55:00.000Z",
+      "fields": {
+        "power": "12 V DC BooBox and fan; 120 V AC TV monitor",
+        "outputs": "TV monitor scene, fan and audio",
+        "trigger": "Actor button starts complete 30-second scene; automatic reset",
+        "controller": "Local BooBox controller",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, actor button, BooBox, TV monitor, fan and audio inspection/service, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: one actor-button press starts the complete Living Portrait scene—TV monitor, fan and audio together. The sequence runs for 30 seconds, then automatically resets. The BooBox remains the local controller. HollowNet provides documentation, reference material, notes and maintenance history only; no Hub operational controls or live status are required. Active-scene button re-trigger behavior remains to be documented."
+      }
     }
   ]
 }
