@@ -603,6 +603,21 @@
         "maintenanceLog": "HollowNet maintenance record required: log date, operator, both projectors/media players, 120 V motor, crank arm, six articulated spiders, monofilament lines, attachment points, repairs and notes. No service events are recorded yet.",
         "notes": "Confirmed walkthrough: the Sitting Room Spiders effect uses two projectors that automatically play continuous loops. Both projector/media-player systems are controlled by one manual power switch. A separate manual power switch controls the continuously running 120 V motor, which drives a crank arm that raises and lowers six articulated spiders on monofilament. The crank geometry causes the spiders to rise and fall at different times and speeds. The entire effect remains local with no Hub operational control. Projector/media-player models and the motor rating remain to be documented."
       }
+    },
+    {
+      "assetId": "HNA-26-SCN-003",
+      "confirmedAt": "2026-08-22T20:05:00.000Z",
+      "fields": {
+        "power": "5 V DC Raspberry Pi; scene lighting and actor/drop equipment supplies — details TBD",
+        "outputs": "Flashing skeleton-reflection lighting; lighting transition to live hanging actor; actor drop/reveal",
+        "trigger": "Hanging actor uses local remote to start 20-second scene; manual actor reset required after every run",
+        "controller": "Local Raspberry Pi scene controller",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, trigger remote, Raspberry Pi, skeleton-reflection lighting, actor reveal lighting, hanging/drop equipment, physical safety inspection, manual reset check, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: the Library Hanging Transformation is a 20-second local actor scene. The hanging actor starts the sequence with a remote. Lighting flashes on a reflected skeleton positioned over the real actor, then changes from the skeleton image to the live actor as the actor drops down. After each performance, the actor must manually reset the effect before it can run again. The Raspberry Pi and scene remain completely local with no Hub operational control. Exact lighting channels, remote type, power distribution, actor/drop equipment and reset procedure remain to be documented."
+      }
     }
   ]
 }
