@@ -621,17 +621,17 @@
     },
     {
       "assetId": "HNA-26-ANM-007",
-      "confirmedAt": "2026-08-22T20:15:00.000Z",
+      "confirmedAt": "2026-08-22T20:25:00.000Z",
       "fields": {
-        "power": "12 V DC movement motor; dedicated illusion light supply — voltage TBD",
+        "power": "One local master switch powers the 12 V DC movement motor and dedicated illusion light together; light supply voltage TBD",
         "outputs": "Lit Pepper's Ghost illusion with subtle motorized movement",
-        "trigger": "TBD — switching, timing and reset behavior not yet confirmed",
+        "trigger": "Single local master power switch turns the illusion light on and starts continuous motor movement",
         "controller": "Local light and 12 V motor controls — details TBD",
         "network": "None — completely local operation",
         "reportsTo": "Local Only",
         "controlledBy": "",
         "maintenanceLog": "HollowNet maintenance record required: log date, operator, Pepper's Ghost reflective surface, dedicated light, 12 V motor, movement linkage, mounting, repairs and notes. No service events are recorded yet.",
-        "notes": "Confirmed walkthrough: the Back Hall Ghost is a Pepper's Ghost illusion illuminated by a dedicated light. A 12 V motor provides slight movement to the ghost. It currently remains local. The light voltage, motor mechanism, power switching, trigger, run pattern and reset behavior remain to be documented."
+        "notes": "Confirmed walkthrough: the Back Hall Ghost is a Pepper's Ghost illusion illuminated by a dedicated light. A 12 V motor provides slight continuous movement to the ghost. One local master switch turns the light and motor on together; they are not switched separately, and the motor runs continuously while powered. The effect remains completely local with no Hub operational control. The light voltage and motor mechanism remain to be documented."
       }
     }
   ]
