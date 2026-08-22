@@ -71,7 +71,7 @@
       "notes": "Planned zone boundary for the facade windows, Front Porch and Reception Room. Room-controller needs will be decided during the scene walkthrough.",
       "power": "TBD",
       "status": "Planned",
-      "affects": "",
+      "affects": "HNA-26-ANM-004",
       "assetId": "HNA-26-CTL-005",
       "network": "Ethernet / Wi-Fi uplink; field network — TBD",
       "outputs": "Zone commands, status aggregation, service controls",
@@ -512,6 +512,29 @@
         "reportsTo": "Local Only",
         "controlledBy": "",
         "notes": "Confirmed walkthrough: the Front Porch Rocking Chair uses a 12 V DC wiper motor and a local timer relay to repeat its rocking loop. It remains completely local with no HollowNet operational control. Exact rocking/rest intervals and the upstream power-switch behavior remain to be documented."
+      }
+    },
+    {
+      "assetId": "HNA-26-ANM-004",
+      "confirmedAt": "2026-08-22T17:55:00.000Z",
+      "fields": {
+        "power": "5 V DC ESP32; high-current servo supply and voltage — TBD",
+        "outputs": "Confirmed head movement; possible hand/arm movement and weight shift",
+        "trigger": "Random ambient motion; possible actor button and/or motion sensor; Hub test/control",
+        "controller": "ESP32 HollowNet field node",
+        "network": "Wi-Fi to Front House Zone Controller",
+        "reportsTo": "Zone Controller",
+        "controlledBy": "HNA-26-CTL-005",
+        "notes": "Confirmed walkthrough: the planned Suit of Armor uses an ESP32 HollowNet node. Head movement is required; hand/arm movement and a weight-shift effect are possible additions. Normal behavior uses randomized ambient motion, with an actor button and/or motion sensor still under consideration. The Hub must show online/status/fault information and provide enable, disable, individual movement tests and scene-control commands. Servo count, motion limits, trigger selection, random timing and power/current budget remain TBD. Any weight-shift mechanism requires a secured base, mechanical stops and stability testing before operation."
+      }
+    },
+    {
+      "assetId": "HNA-26-CTL-005",
+      "confirmedAt": "2026-08-22T17:55:00.000Z",
+      "fields": {
+        "affects": "HNA-26-ANM-004",
+        "outputs": "Front House commands, status aggregation and service controls; Suit of Armor enable/test/control",
+        "notes": "Front House zone boundary for Facade Windows, Front Porch and Reception Room. The Suit of Armor is the first planned connected field node and reports online/status/fault data while accepting Hub enable, disable, movement-test and scene-control commands. Facade Windows and the Rocking Chair remain local."
       }
     }
   ]

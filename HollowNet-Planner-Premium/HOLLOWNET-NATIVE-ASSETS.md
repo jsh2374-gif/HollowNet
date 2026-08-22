@@ -55,6 +55,7 @@ HNA-26-CTL-003 HollowNet Main Hub
 │   │   └── HNA-26-SCN-006 Haunted Radio
 │   └── HNA-26-PRJ-001 Mia & Roy (planned hub integration)
 ├── HNA-26-CTL-005 Front House Zone Controller
+│   └── HNA-26-ANM-004 Suit of Armor
 ├── HNA-26-CTL-006 Upper House Zone Controller
 │   └── HNA-26-CTL-011 First Room Controller
 ├── HNA-26-CTL-007 Basement Zone Controller
