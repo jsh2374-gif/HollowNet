@@ -92,7 +92,7 @@ input,select,textarea{width:100%;color:var(--text);background:#09090b;border:1px
           <label for="zone">Zone</label>
           <select id="zone">
             <option>Exterior Grounds</option><option>Front House</option><option>Upper House</option>
-            <option>Basement</option><option>Cemetery</option><option>Crypt</option><option>Out Back</option>
+            <option>Basement</option><option>Cemetery</option><option>Bog</option><option>Crypt</option><option>Out Back</option>
             <option>Operations</option><option>Other</option>
           </select>
         </div>
@@ -143,7 +143,7 @@ input,select,textarea{width:100%;color:var(--text);background:#09090b;border:1px
       <div class="toolbar">
         <input id="search" oninput="render()" placeholder="Search builds, zones, materials or notes...">
         <select id="filterStage" onchange="render()"><option value="">All Stages</option><option>Not Started</option><option>Parts Gathering</option><option>Building</option><option>Testing</option><option>Blocked</option><option>Done</option></select>
-        <select id="filterZone" onchange="render()"><option value="">All Zones</option><option>Exterior Grounds</option><option>Front House</option><option>Upper House</option><option>Basement</option><option>Cemetery</option><option>Crypt</option><option>Out Back</option><option>Operations</option><option>Other</option></select>
+        <select id="filterZone" onchange="render()"><option value="">All Zones</option><option>Exterior Grounds</option><option>Front House</option><option>Upper House</option><option>Basement</option><option>Cemetery</option><option>Bog</option><option>Crypt</option><option>Out Back</option><option>Operations</option><option>Other</option></select>
         <select id="filterMaterials" onchange="render()"><option value="">All Materials</option><option value="needed">Materials Needed</option><option value="complete">Materials Complete</option></select>
         <select id="sortBy" onchange="render()"><option value="priority">Sort: Priority</option><option value="dueDate">Sort: Target Date</option><option value="progress">Sort: Progress</option><option value="title">Sort: Name</option><option value="zone">Sort: Zone</option></select>
       </div>

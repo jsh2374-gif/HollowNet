@@ -437,11 +437,12 @@ tr:hover td{background:rgba(186,151,96,.035)}
   border-radius:7px;padding:18px;display:grid;grid-template-columns:1fr 128px;
   gap:12px;align-items:center;min-height:172px;
 }
+.label-preview>div{min-width:0;overflow-wrap:anywhere}
 .label-preview img{width:124px;height:124px}
 .label-brand{font-family:Cinzel,Georgia,serif;color:#7e261f;letter-spacing:.13em;font-size:12px;font-weight:700}
 .label-preview h4{margin:10px 0 4px;font-size:15px;color:#111}
 .label-preview .print-id{font-family:monospace;font-weight:bold;font-size:15px;color:#281b14;margin:7px 0}
-.label-preview p{margin:3px 0;color:#514941;font-size:11px}
+.label-preview p{margin:3px 0;color:#514941;font-size:11px;overflow-wrap:anywhere}
 .modal-actions{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap}
 .cloud-help{
   margin:0 0 15px;color:var(--muted);font-size:12px;line-height:1.6;
@@ -479,6 +480,7 @@ body.asset-view .shell{display:none}
   padding:.12in;display:inline-grid;grid-template-columns:1fr .9in;gap:.08in;
   margin:.08in;vertical-align:top;overflow:hidden;
 }
+.qrLabel>div{min-width:0;overflow-wrap:anywhere}
 .qrLabel img{width:.84in;height:.84in;justify-self:end;margin-top:.08in}
 .qrTitle{font-family:Georgia,serif;color:#7e261f;text-transform:uppercase;letter-spacing:.11em;font-size:9px;font-weight:bold}
 .qrId{font-family:monospace;font-size:10px;font-weight:bold;margin-top:5px}
@@ -571,7 +573,7 @@ body.asset-view .shell{display:none}
             <option>Animatronic</option><option>Lighting</option><option>Video</option>
             <option>Projection</option><option>Audio</option><option>Fog / Mist</option>
             <option>Sensor</option><option>Pneumatic</option><option>Motor</option><option>Mic</option>
-            <option>Interactive</option><option>Utility / Power</option><option>Scene Controller</option>
+            <option>Interactive</option><option>Utility / Power</option><option>Scene Controller</option><option>Controller</option>
             <option>Actor Trigger</option><option>Other</option><option>Puppet</option>
           </select>
         </div>
@@ -591,7 +593,7 @@ body.asset-view .shell{display:none}
           <label for="zone">Technical Zone</label>
           <select id="zone">
             <option>Exterior Grounds</option><option>Front House</option>
-            <option>Upper House</option><option>Basement</option><option>Cemetery</option><option>Crypt</option><option>Out Back</option>
+            <option>Upper House</option><option>Basement</option><option>Cemetery</option><option>Bog</option><option>Crypt</option><option>Out Back</option>
             <option>Operations</option><option>Other</option>
           </select>
         </div>
@@ -721,7 +723,7 @@ body.asset-view .shell{display:none}
         <select id="filterZone" onchange="render()">
           <option value="">All Zones</option><option>Exterior Grounds</option>
           <option>Front House</option><option>Upper House</option>
-          <option>Basement</option><option>Cemetery</option><option>Crypt</option>
+          <option>Basement</option><option>Cemetery</option><option>Bog</option><option>Crypt</option>
           <option>Out Back</option><option>Operations</option><option>Other</option>
         </select>
         <select id="filterStatus" onchange="render()">
@@ -744,6 +746,7 @@ body.asset-view .shell{display:none}
           <button class="btn" onclick="exportJSON()">Export JSON</button>
           <button class="btn" onclick="exportCSV()">Export CSV</button>
           <button class="btn" onclick="importJSON()">Import</button>
+          <button class="btn" onclick="installNativeAssetPack()">Add Native Asset Pack</button>
           <button class="btn" onclick="printLabels()">Print Labels</button>
           <button class="btn" onclick="exportAllReadmes()">Export READMEs</button>
           <button class="btn danger" onclick="clearAll()">Clear All</button>
@@ -786,7 +789,8 @@ body.asset-view .shell{display:none}
     </div>
     <div class="label-preview" id="singleLabelPreview"></div>
     <div class="modal-actions">
-      <button class="btn primary" onclick="printCurrentLabel()">Print This Label</button>
+      <button class="btn primary" onclick="printCurrentLabel()">Print Asset Label</button>
+      <button class="btn" onclick="printCurrentControllerLabel()">Print Controller Label</button>
       <button class="btn" onclick="downloadCurrentReadme()">Download README</button>
       <button class="btn quiet" onclick="closeQRModal()">Close</button>
     </div>
@@ -857,7 +861,7 @@ let cloudPushTimer = null;
 const TYPE_CODES = {
   "Animatronic":"ANM","Lighting":"LGT","Video":"VID","Projection":"PRJ","Audio":"AUD","Mic":"MIC",
   "Fog / Mist":"FOG","Sensor":"SNS","Pneumatic":"PNU","Motor":"MTR","Puppet":"PUP",
-  "Interactive":"INT","Utility / Power":"UTL","Scene Controller":"SCN",
+  "Interactive":"INT","Utility / Power":"UTL","Scene Controller":"SCN","Controller":"CTL",
   "Actor Trigger":"ACT","Other":"OTH"
 };
 
@@ -1264,14 +1268,24 @@ function render(){
 }
 function countStatus(status){ return items.filter(item => item.status === status).length; }
 
-function labelMarkup(item, preview=false){
+function labelMarkup(item, preview=false, labelType="asset"){
+  const controllerLabel = labelType === "controller";
+  const heading = controllerLabel ? "HollowNet Controller" : "HollowNet Asset";
+  const labelName = controllerLabel ? `${item.name} Controller` : item.name;
   return `
     <div>
-      <div class="${preview ? "label-brand" : "qrTitle"}">HollowNet Asset</div>
-      ${preview ? `<h4>${esc(item.name)}</h4>` : `<div class="qrSmall">${esc(item.name)}</div>`}
+      <div class="${preview ? "label-brand" : "qrTitle"}">${heading} · House in the Hollow</div>
+      ${preview ? `<h4>${esc(labelName)}</h4>` : `<div class="qrSmall">${esc(labelName)}</div>`}
       <div class="${preview ? "print-id" : "qrId"}">${esc(item.assetId)}</div>
-      <p class="${preview ? "" : "qrSmall"}">${esc(item.zone)} · ${esc(item.room)}</p>
-      <p class="${preview ? "" : "qrSmall"}">${esc(item.type)}</p>
+      ${controllerLabel ? `
+        <p class="${preview ? "" : "qrSmall"}">NODE: ${esc(item.controllerId || "UNASSIGNED")}</p>
+        <p class="${preview ? "" : "qrSmall"}">CTRL: ${esc(item.controller || "TBD")}</p>
+        <p class="${preview ? "" : "qrSmall"}">POWER: ${esc(item.power || "TBD")} · NETWORK: ${esc(item.network || "TBD")}</p>
+      ` : `
+        <p class="${preview ? "" : "qrSmall"}">ZONE: ${esc(item.zone)} · ROOM: ${esc(item.room)}</p>
+        <p class="${preview ? "" : "qrSmall"}">TYPE: ${esc(item.type)}</p>
+      `}
+      <p class="${preview ? "" : "qrSmall"}">Scan for service / documentation</p>
     </div>
     <img src="${assetQRURL(item,220)}" alt="QR Code">`;
 }
@@ -1282,15 +1296,19 @@ function openQRModal(realIndex){
 }
 function closeQRModal(){ el("qrModal").classList.remove("open"); selectedQRIndex = null; }
 function modalBackdropClose(event){ if(event.target.id === "qrModal") closeQRModal(); }
-function printLabels(list = filteredItems().map(({item}) => item)){
+function printLabels(list = filteredItems().map(({item}) => item), labelType="asset"){
   if(!list.length){ alert("There are no matching labels to print."); return; }
   const sheet = el("labelSheet");
-  sheet.innerHTML = list.map(item => `<div class="qrLabel">${labelMarkup(item,false)}</div>`).join("");
+  sheet.innerHTML = list.map(item => `<div class="qrLabel">${labelMarkup(item,false,labelType)}</div>`).join("");
   window.print();
 }
 function printCurrentLabel(){
   if(selectedQRIndex === null) return;
   printLabels([items[selectedQRIndex]]);
+}
+function printCurrentControllerLabel(){
+  if(selectedQRIndex === null) return;
+  printLabels([items[selectedQRIndex]],"controller");
 }
 function downloadCurrentReadme(){ if(selectedQRIndex !== null) downloadReadme(selectedQRIndex); }
 function serviceHistoryMarkup(item){
@@ -1479,6 +1497,23 @@ function exportCSV(){
 function importJSON(){
   if(!requireEditingPassword()) return;
   el("importFile").click();
+}
+async function installNativeAssetPack(){
+  if(!requireEditingPassword()) return;
+  if(!confirm("Add the Haunted Radio, Queue controller and Bog framework records? Existing records and matching Asset IDs will not be changed.")) return;
+  try{
+    const response = await fetch("data/hollownet-native-assets.json",{cache:"no-store"});
+    if(!response.ok) throw new Error(`Asset pack could not be loaded (${response.status}).`);
+    const payload = await response.json();
+    const incoming = Array.isArray(payload) ? payload : payload.items;
+    if(!Array.isArray(incoming)) throw new Error("The HollowNet-native asset pack is invalid.");
+    const knownIds = new Set(items.map(item => item.assetId));
+    const additions = incoming.filter(item => item.assetId && item.name && !knownIds.has(item.assetId)).map(normalizeItem);
+    if(!additions.length){ notify("The HollowNet-native assets are already registered."); return; }
+    items.push(...additions);
+    persist();
+    notify(`${additions.length} HollowNet-native asset${additions.length === 1 ? "" : "s"} registered.`);
+  }catch(error){ alert(error.message); }
 }
 function handleImport(event){
   if(!requireEditingPassword()) return;
