@@ -547,16 +547,16 @@
     },
     {
       "assetId": "HNA-26-ACT-001",
-      "confirmedAt": "2026-08-22T19:10:00.000Z",
+      "confirmedAt": "2026-08-22T19:25:00.000Z",
       "fields": {
         "power": "5 V DC Raspberry Pi; monitor/audio supplies — TBD",
         "outputs": "Stair Hall Ghost monitor and audio",
-        "trigger": "Actor button press; duration/reset behavior — TBD",
+        "trigger": "Actor button press starts 35-second scene; reset behavior — TBD",
         "controller": "Local Raspberry Pi",
         "network": "None — completely local operation",
         "reportsTo": "Local Only",
         "controlledBy": "",
-        "notes": "Confirmed walkthrough: Stair Hall Ghost operates independently from the Filing Cabinet and Storm systems. An actor button press triggers its local Raspberry Pi monitor/audio effect. It remains completely local with no Hub operational control. Program startup, sequence duration, automatic reset and active-scene re-trigger behavior remain to be documented."
+        "notes": "Confirmed walkthrough: Stair Hall Ghost operates independently from the Filing Cabinet and Storm systems. An actor button press triggers its local Raspberry Pi monitor/audio effect for 35 seconds. It remains completely local with no Hub operational control. Program startup, automatic reset and active-scene re-trigger behavior remain to be documented."
       }
     },
     {
@@ -576,17 +576,17 @@
     },
     {
       "assetId": "HNA-26-PRJ-003",
-      "confirmedAt": "2026-08-22T19:10:00.000Z",
+      "confirmedAt": "2026-08-22T19:27:00.000Z",
       "fields": {
         "room": "Stair Hall / Sitting Room / Library / Gallery / Grand Hall",
         "power": "Distributed projector, TV-monitor and media-player supplies — details TBD",
         "outputs": "Distributed Storm projections on projectors and TV monitors",
-        "trigger": "Continuous local media loop; power/start behavior — TBD",
+        "trigger": "Media system auto-starts continuous local loop with power; some projectors start manually",
         "controller": "Local media player system — details TBD",
         "network": "None — completely local operation",
         "reportsTo": "Local Only",
         "controlledBy": "",
-        "notes": "Confirmed walkthrough: Storm is an independent distributed projection system spanning Stair Hall, Sitting Room, Library, Gallery and Grand Hall. It does not synchronize with Stair Hall Ghost or Filing Cabinet and remains completely local with no Hub operational control. Exact players, display map, synchronization, loop length and automatic startup behavior remain to be documented."
+        "notes": "Confirmed walkthrough: Storm is an independent distributed projection system spanning Stair Hall, Sitting Room, Library, Gallery and Grand Hall. Its media system starts automatically with power and runs a continuous local loop, although some projectors still require manual startup. It does not synchronize with Stair Hall Ghost or Filing Cabinet and remains completely local with no Hub operational control. Exact players, display map, synchronization, loop length and which projectors require manual startup remain to be documented."
       }
     }
   ]
