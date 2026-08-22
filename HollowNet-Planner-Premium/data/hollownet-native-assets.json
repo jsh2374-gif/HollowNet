@@ -218,28 +218,28 @@
   "updates": [
     {
       "assetId": "HNA-26-SCN-006",
-      "confirmedAt": "2026-08-22T16:40:00.000Z",
+      "confirmedAt": "2026-08-22T16:55:00.000Z",
       "fields": {
         "power": "Raspberry Pi 5 1GB via 5 V / 5 A USB-C; ESP32, amplifier, lights and motor supplies — final voltages TBD",
         "outputs": "Audio, lights, motor, tuning/station behavior, startle sequence, Hub self-test checklist, local green pass light",
-        "trigger": "Power-on self-test; before 6:45 PM local enter standby; at/after 6:45 PM enter show mode immediately after test; randomized startle timer; Hub override",
+        "trigger": "Power-on self-test; before 6:45 PM local enter standby; at/after 6:45 PM enter show mode immediately after test; randomized startle timer defaults to 3–8 minutes; Hub-adjustable for crowd size",
         "controller": "Raspberry Pi 5 1GB primary controller; ESP32 I/O coprocessor optional",
         "network": "HollowNet via Queue Zone Controller; wired Ethernet preferred for Pi, Wi-Fi fallback",
         "reportsTo": "Zone Controller",
         "controlledBy": "HNA-26-CTL-002",
-        "notes": "Confirmed design: on power-up, run a startup sequence that exercises sound, lights and motor and reports component results. A passing test displays a component checklist at the Hub and turns on a green status light at the radio. If testing completes before 6:45 PM local time, enter standby and switch to show mode at 6:45 PM; if testing completes at or after 6:45 PM, enter show mode immediately. Show mode arms the haunted startle behavior. While armed, startles occur after randomized delays rather than from a visitor or actor sensor; between startles, continue the currently selected station and settings. The Hub must edit the random-delay minimum and maximum, settings and schedule; select mode; enable/disable the scene; run tests; control volume and playback; trigger a service startle; and show online state, current mode, playback state and self-test results. The final random-delay range and exact feedback sensors for proving sound, light and motor operation remain TBD. Hardware assignment confirmed from supplied photos: use the available Raspberry Pi 5 1GB locally for media, scheduling and scene state. The Pi can also handle dial, light and motor commands through suitable ADC/input and load-driver hardware; an ESP32 remains optional as a real-time/fault-isolation I/O coprocessor. Do not use the original Raspberry Pi Model B as the show-critical radio controller; retain it as an unassigned spare or legacy board. The separate Raspberry Pi 5 4GB is reserved for the Main Hub."
+        "notes": "Confirmed design: on power-up, run a startup sequence that exercises sound, lights and motor and reports component results. A passing test displays a component checklist at the Hub and turns on a green status light at the radio. If testing completes before 6:45 PM local time, enter standby and switch to show mode at 6:45 PM; if testing completes at or after 6:45 PM, enter show mode immediately. Show mode arms the haunted startle behavior. While armed, startles occur after randomized delays rather than from a visitor or actor sensor; the default delay range is 3–8 minutes, with both limits editable live from the Hub to suit crowd size. Between startles, continue the currently selected station and settings. The Hub must also edit settings and schedule; select mode; enable/disable the scene; run tests; control volume and playback; trigger a service startle; and show online state, current mode, playback state and self-test results. Exact feedback sensors for proving sound, light and motor operation remain TBD. Hardware assignment confirmed from supplied photos: use the available Raspberry Pi 5 1GB locally for media, scheduling and scene state. The Pi can also handle dial, light and motor commands through suitable ADC/input and load-driver hardware; an ESP32 remains optional as a real-time/fault-isolation I/O coprocessor. Do not use the original Raspberry Pi Model B as the show-critical radio controller; retain it as an unassigned spare or legacy board. The separate Raspberry Pi 5 4GB is reserved for the Main Hub."
       }
     },
     {
       "assetId": "HNA-26-CTL-002",
-      "confirmedAt": "2026-08-22T16:40:00.000Z",
+      "confirmedAt": "2026-08-22T16:55:00.000Z",
       "fields": {
         "power": "Queue controller and network supplies — TBD",
         "outputs": "Radio mode, schedule, random-delay and settings commands; test controls; component checklist, pass/fault and health reporting",
         "trigger": "Main Hub commands / local radio schedule / local service",
         "controller": "Queue gateway endpoint; radio uses Raspberry Pi 5 1GB with optional ESP32 I/O",
         "network": "Main Hub uplink through Exterior Grounds Zone Controller; local radio link — TBD",
-        "notes": "Queue control boundary for the Haunted Radio. It must expose enable, standby, show and armed-haunted modes; editable 6:45 PM schedule, randomized-startle minimum/maximum delay and scene settings; volume and playback controls; service test/startle commands; and online, mode, playback and startup-self-test component status to the Main Hub. A passing startup test must display a Hub checklist and illuminate the radio's local green status light. If power is applied after 6:45 PM, the radio enters show mode immediately after passing self-test. The radio must retain its local schedule, random timer and show behavior if the Hub connection is unavailable."
+        "notes": "Queue control boundary for the Haunted Radio. It must expose enable, standby, show and armed-haunted modes; editable 6:45 PM schedule, scene settings and randomized-startle minimum/maximum delay. The random timer defaults to 3–8 minutes and both limits can be changed live from the Hub to suit crowd size. It also exposes volume and playback controls; service test/startle commands; and online, mode, playback and startup-self-test component status. A passing startup test must display a Hub checklist and illuminate the radio's local green status light. If power is applied after 6:45 PM, the radio enters show mode immediately after passing self-test. The radio must retain its local schedule, random timer and show behavior if the Hub connection is unavailable."
       }
     }
   ]
