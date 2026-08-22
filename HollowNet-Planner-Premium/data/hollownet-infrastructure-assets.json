@@ -588,6 +588,21 @@
         "controlledBy": "",
         "notes": "Confirmed walkthrough: Storm is an independent distributed projection system spanning Stair Hall, Sitting Room, Library, Gallery and Grand Hall. Its media system starts automatically with power and runs a continuous local loop, although some projectors still require manual startup. It does not synchronize with Stair Hall Ghost or Filing Cabinet and remains completely local with no Hub operational control. Exact players, display map, synchronization, loop length and which projectors require manual startup remain to be documented."
       }
+    },
+    {
+      "assetId": "HNA-26-ANM-006",
+      "confirmedAt": "2026-08-22T19:45:00.000Z",
+      "fields": {
+        "power": "120 V AC continuous-duty crank motor; two projector/media-player supplies — exact ratings TBD",
+        "outputs": "Two autoplay projection loops; crank-driven raising and lowering of six articulated spiders",
+        "trigger": "Power-on continuous operation: both projectors autoplay their loops and the 120 V motor runs continuously",
+        "controller": "Local autoplay media players and direct-powered crank mechanism",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, both projectors/media players, 120 V motor, crank arm, six articulated spiders, monofilament lines, attachment points, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: the Sitting Room Spiders effect uses two projectors that automatically play continuous loops. A continuously running 120 V motor drives a crank arm that raises and lowers six articulated spiders on monofilament. The crank geometry causes the spiders to rise and fall at different times and speeds. The entire effect remains local with no Hub operational control. Projector/media-player models, motor rating and whether every component shares one power switch remain to be documented."
+      }
     }
   ]
 }
