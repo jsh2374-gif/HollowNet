@@ -467,6 +467,23 @@
         "network": "Gigabit Ethernet primary; Wi-Fi service; MQTT planned",
         "notes": "Main HollowNet supervisory controller for schedules, operator commands, time synchronization, health monitoring and emergency controls. Hardware is confirmed as the available Raspberry Pi 5 4GB. Add active cooling, a suitable 5 V / 5 A USB-C supply, UPS-backed power and protected shutdown before commissioning."
       }
+    },
+    {
+      "assetId": "HNA-26-FOG-001",
+      "confirmedAt": "2026-08-22T17:10:00.000Z",
+      "fields": {
+        "name": "Arizona Mist System",
+        "room": "Tech Shed / Bridge / Furnace Room / Bog / Graveyard",
+        "power": "120 V AC at Tech Shed",
+        "outputs": "Property-wide mist; Bridge branch; Furnace Room branch with two steam-simulation valves; Bog branch; Graveyard branch",
+        "trigger": "Manual switch at Tech Shed",
+        "controller": "Arizona Mist machine local controls — exact model TBD",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, pump/filter/nozzle/valve inspection or service, leaks, repairs, winterization, recommissioning and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: one large Arizona Mist machine in the Tech Shed serves the property. Distribution lines branch to the Bridge, Furnace Room, Bog and Graveyard. The Furnace Room branch has two valves that simulate steam escaping through pipes. The machine starts from a manual switch and remains completely local; the Main Hub provides documentation only, including reference material, maintenance history and notes. Attach the exact model, manual, plumbing map, valve labels and service instructions when available."
+      }
     }
   ]
 }
