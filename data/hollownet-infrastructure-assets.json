@@ -516,16 +516,16 @@
     },
     {
       "assetId": "HNA-26-ANM-004",
-      "confirmedAt": "2026-08-22T17:55:00.000Z",
+      "confirmedAt": "2026-08-22T18:10:00.000Z",
       "fields": {
-        "power": "5 V DC ESP32; high-current servo supply and voltage — TBD",
-        "outputs": "Confirmed head movement; possible hand/arm movement and weight shift",
-        "trigger": "Random ambient motion; possible actor button and/or motion sensor; Hub test/control",
+        "power": "Separate supplies: 5 V DC ESP32 and dedicated high-current servo supply — servo voltage/current TBD",
+        "outputs": "Version-one head and hand/arm movement; possible future weight shift",
+        "trigger": "Randomized movement approximately every 45 seconds by default, Hub-adjustable; either actor button or motion sensor — selection TBD; Hub test/control",
         "controller": "ESP32 HollowNet field node",
         "network": "Wi-Fi to Front House Zone Controller",
         "reportsTo": "Zone Controller",
         "controlledBy": "HNA-26-CTL-005",
-        "notes": "Confirmed walkthrough: the planned Suit of Armor uses an ESP32 HollowNet node. Head movement is required; hand/arm movement and a weight-shift effect are possible additions. Normal behavior uses randomized ambient motion, with an actor button and/or motion sensor still under consideration. The Hub must show online/status/fault information and provide enable, disable, individual movement tests and scene-control commands. Servo count, motion limits, trigger selection, random timing and power/current budget remain TBD. Any weight-shift mechanism requires a secured base, mechanical stops and stability testing before operation."
+        "notes": "Confirmed walkthrough: version one of the planned Suit of Armor uses an ESP32 HollowNet node with both head and hand/arm movement. A weight-shift effect remains a possible future addition. Normal behavior selects a randomized movement approximately every 45 seconds by default; the cadence is adjustable from the Hub. One external trigger type may be added—either an actor button or a motion sensor, not both—with the selection still TBD. The ESP32 and servos use separate power supplies. The Hub must show online/status/fault information and provide enable, disable, individual movement tests and scene-control commands. Servo count, motion limits and servo-supply voltage/current remain TBD. Any weight-shift mechanism requires a secured base, mechanical stops and stability testing before operation."
       }
     },
     {
