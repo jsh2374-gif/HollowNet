@@ -509,16 +509,16 @@
     },
     {
       "assetId": "HNA-26-SCN-001",
-      "confirmedAt": "2026-08-22T18:25:00.000Z",
+      "confirmedAt": "2026-08-22T18:40:00.000Z",
       "fields": {
         "power": "5 V DC Raspberry Pi 4; connected scene hardware supplies — TBD",
         "outputs": "45-second coordinated lighting, audio and bass-shaker scene",
-        "trigger": "Doorbell button pressed as group enters",
+        "trigger": "Program auto-starts with Pi power; doorbell button starts scene when ready; button is ignored during 45-second run",
         "controller": "Raspberry Pi 4; also serves as First Room Controller",
         "network": "Wi-Fi to Upper House Zone Controller",
         "reportsTo": "Zone Controller",
         "controlledBy": "HNA-26-CTL-006",
-        "notes": "Confirmed walkthrough: Mrs. Grimm is both the First Room scene and its room controller; no separate CTL-011 hardware is required. A doorbell button pressed as the group enters starts the complete coordinated lighting, audio and bass-shaker scene. The sequence lasts 45 seconds, then automatically resets and returns to ready. The Hub must show Pi online/status plus ready, running and fault state and provide scene test and reset controls. Pi program startup behavior and button re-trigger behavior during an active scene remain to be documented."
+        "notes": "Confirmed walkthrough: Mrs. Grimm is both the First Room scene and its room controller; no separate CTL-011 hardware is required. The scene program starts automatically whenever the Pi receives power. A doorbell button pressed as the group enters starts the complete coordinated lighting, audio and bass-shaker scene when ready. Additional button presses are ignored during the 45-second sequence; afterward it automatically resets and returns to ready. The Hub provides the only status indicator—Pi online plus ready, running and fault state—and provides scene test and reset controls. No physical room status light is required."
       }
     },
     {
