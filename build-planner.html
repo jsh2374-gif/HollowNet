@@ -217,6 +217,16 @@ async function mergeNativeAssets(){
   assets.push(...additions);
   return additions.length;
 }
+async function showNativeAssetsImmediately(){
+  try{
+    const added = await mergeNativeAssets();
+    if(added){
+      localStorage.setItem(ASSET_STORAGE_KEY,JSON.stringify(assets));
+      populateAssetSelect();
+      render();
+    }
+  }catch(error){ console.warn(error.message); }
+}
 function assetNeedsBuild(asset){ return BUILD_ASSET_STATUSES.includes(asset.status); }
 function buildAssetIds(){ return new Set(builds.map(build => build.assetId).filter(Boolean)); }
 function assetToBuild(asset){
@@ -505,7 +515,7 @@ function notify(message){
   document.body.appendChild(toast); setTimeout(() => toast.remove(),2400);
 }
 document.addEventListener("keydown", e => { if(e.key === "Escape") closeCloudModal(); });
-normalizeBuilds(); populateAssetSelect(); renderMaterialDraft(); render(); updateStorageMark(); loadAssets(); loadSharedBuilds();
+normalizeBuilds(); populateAssetSelect(); renderMaterialDraft(); render(); updateStorageMark(); showNativeAssetsImmediately(); loadAssets(); loadSharedBuilds();
 </script>
 </body>
 </html>

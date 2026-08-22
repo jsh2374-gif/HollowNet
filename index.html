@@ -902,6 +902,15 @@ async function mergeNativeAssets(){
   items.push(...additions);
   return additions.length;
 }
+async function showNativeAssetsImmediately(){
+  try{
+    const added = await mergeNativeAssets();
+    if(added){
+      localStorage.setItem("hollownetPlannerItems", JSON.stringify(items));
+      render();
+    }
+  }catch(error){ console.warn(error.message); }
+}
 function appURL(assetId=""){
   const url = new URL(window.location.href);
   url.search = "";
@@ -1570,6 +1579,7 @@ document.addEventListener("keydown", e => {
 normalizeItems();
 render();
 updateStorageMark();
+showNativeAssetsImmediately();
 loadSharedAssets();
 </script>
 </body>
