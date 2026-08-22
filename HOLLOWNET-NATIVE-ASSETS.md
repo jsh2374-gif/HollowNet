@@ -73,3 +73,9 @@ HNA-26-CTL-003 HollowNet Main Hub
 See `HOLLOWNET-SCENE-WALKTHROUGH.md` for the room-by-room review and the recommended controller decisions that remain open.
 
 The built `HNA-26-CTL-015` Bridge/Fountain SimFlame Controller remains local and controls `HNA-26-LGT-001`. It receives power from the Garden Shed and starts its three flicker circuits automatically with shed power. Main Hub control is not required at this time.
+
+## Confirmed computers
+
+- `HNA-26-CTL-003` HollowNet Main Hub: Raspberry Pi 5 4GB.
+- `HNA-26-SCN-006` Haunted Radio: Raspberry Pi 5 1GB as the primary local controller; ESP32 real-time I/O is optional.
+- Original Raspberry Pi Model B shown in the supplied photos: unassigned spare/legacy hardware, not recommended for show-critical radio control.

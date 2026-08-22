@@ -457,6 +457,16 @@
         "controlledBy": "HNA-26-CTL-004",
         "notes": "Confirmed walkthrough: the Raspberry Pi automatically starts the silent Mia & Roy projection loop when powered; the projector currently requires manual startup. Future HollowNet integration through the Exterior Grounds Zone Controller must show Pi-online and video-loop-running status and provide start, stop, restart-loop and reboot-Pi controls. Automatic projector startup is also required; its implementation remains TBD pending the projector model and supported control method."
       }
+    },
+    {
+      "assetId": "HNA-26-CTL-003",
+      "confirmedAt": "2026-08-22T16:10:00.000Z",
+      "fields": {
+        "power": "Raspberry Pi 5 4GB via 5 V / 5 A USB-C; UPS and protected shutdown — TBD",
+        "controller": "Raspberry Pi 5 4GB",
+        "network": "Gigabit Ethernet primary; Wi-Fi service; MQTT planned",
+        "notes": "Main HollowNet supervisory controller for schedules, operator commands, time synchronization, health monitoring and emergency controls. Hardware is confirmed as the available Raspberry Pi 5 4GB. Add active cooling, a suitable 5 V / 5 A USB-C supply, UPS-backed power and protected shutdown before commissioning."
+      }
     }
   ]
 }
