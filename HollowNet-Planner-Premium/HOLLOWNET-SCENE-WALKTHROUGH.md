@@ -31,8 +31,23 @@ Parent: `HNA-26-CTL-004` Exterior Grounds Zone Controller, planned and controlle
 | Bridge / Fountain | `HNA-26-LGT-001` Jack-O-Lanterns and `HNA-26-CTL-015` SimFlame Controller — Built | **Confirmed:** Garden Shed power automatically starts the SimFlame LV unit and its three 12 V AC flicker circuits | Keep local; Main Hub control is not required at this time. Record the Garden Shed source circuit or outlet label during electrical documentation. |
 | Garden Shed | `HNA-26-ANM-002` Caretaker — Built | **Confirmed:** Garden Shed power starts its 12 V DC wiper motor and LED lantern; motion runs continuously | Keep local; no Main Hub control or dedicated HollowNet controller is required. The Garden Shed power feed also enables the Bridge/Fountain SimFlame controller. |
 | Exterior Facade | `HNA-26-PRJ-001` Mia & Roy — Installed | **Confirmed:** Pi auto-starts the silent loop; projector currently starts manually; operation is local | Keep the planned direct link to `CTL-004`; no separate facade controller is required. Hub must show Pi-online and loop-running status and provide start, stop, restart-loop and reboot-Pi controls. Add automatic projector startup after identifying the projector's supported control method. |
-| Queue | `HNA-26-SCN-006` Haunted Radio — Planned | Controlled by `HNA-26-CTL-002` | Complete player/amplifier, tuning input, controller, power and network choices. `CTL-002` reports through `CTL-004`. |
+| Queue | `HNA-26-SCN-006` Haunted Radio — Planned | **Confirmed:** older Pi runs media/schedule/state; ESP32 runs dial, trigger, lights and motor I/O; `CTL-002` reports through `CTL-004` | Power-on self-test covers sound, lights and motor, then standby until 6:45 PM local. Show mode arms the haunted startle while otherwise retaining the selected station/settings. Hub provides full settings, schedule, mode, test, volume, playback and health controls. Confirm exact Pi models, startle input and self-test feedback sensors. |
 | Shared exterior mist | `HNA-26-FOG-001` Mist System — Installed | Local Only; spans bridge, facade, Furnace Room and Cemetery | Treat as a cross-zone utility. During walkthrough, decide whether to split it into separately addressable valve/pump branches or keep a single safety-controlled utility asset. |
+
+### Haunted Radio operating sequence
+
+```mermaid
+stateDiagram-v2
+    [*] --> StartupSelfTest: Power applied
+    StartupSelfTest --> Standby: Report sound / lights / motor results
+    Standby --> ShowMode: 6:45 PM local
+    ShowMode --> ArmedHaunted: Arm startle behavior
+    ArmedHaunted --> Startle: Configured trigger (TBD)
+    Startle --> ArmedHaunted: Sequence complete
+    ArmedHaunted --> ArmedHaunted: Continue selected station / settings
+```
+
+The local Pi owns the schedule and state machine so the radio still operates if the Hub link fails. The Hub can override modes, change schedule/settings, control volume and playback, run subsystem tests or a service startle, and view online, mode, playback and self-test status.
 
 ## Front House
 

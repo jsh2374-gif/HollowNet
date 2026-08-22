@@ -214,5 +214,33 @@
       "maintenanceLog": "",
       "serviceHistory": []
     }
+  ],
+  "updates": [
+    {
+      "assetId": "HNA-26-SCN-006",
+      "confirmedAt": "2026-08-22T15:50:00.000Z",
+      "fields": {
+        "power": "Older Raspberry Pi, ESP32 I/O, audio amplifier, lights and motor supplies — final voltages TBD",
+        "outputs": "Audio, lights, motor, tuning/station behavior, startle sequence, self-test confirmation",
+        "trigger": "Power-on self-test; standby until 6:45 PM local; show and armed-haunted mode; configured startle trigger — TBD; Hub override",
+        "controller": "Older Raspberry Pi for media/state + ESP32 for real-time I/O — exact models TBD",
+        "network": "HollowNet via Queue Zone Controller; wired Ethernet preferred for Pi, Wi-Fi fallback",
+        "reportsTo": "Zone Controller",
+        "controlledBy": "HNA-26-CTL-002",
+        "notes": "Confirmed design: on power-up, run a startup sequence that exercises sound, lights and motor and reports component results, then enter standby. At 6:45 PM local time, enter show mode and arm the haunted startle behavior. Between startles, continue the currently selected station and settings. The Hub must edit settings and schedule, select mode, enable/disable the scene, run tests, control volume and playback, trigger a service startle, and show online state, current mode, playback state and self-test results. Exact feedback sensors for proving sound, light and motor operation remain TBD. Recommended architecture uses the older Pi locally for media, scheduling and scene state, an ESP32 for dial/trigger/light/motor I/O, and reserves the newer Pi for the Main Hub."
+      }
+    },
+    {
+      "assetId": "HNA-26-CTL-002",
+      "confirmedAt": "2026-08-22T15:50:00.000Z",
+      "fields": {
+        "power": "Queue controller and network supplies — TBD",
+        "outputs": "Radio mode, schedule and settings commands; test controls; health and self-test reporting",
+        "trigger": "Main Hub commands / local radio schedule / local service",
+        "controller": "Queue gateway endpoint; radio uses older Pi + ESP32 — exact hardware TBD",
+        "network": "Main Hub uplink through Exterior Grounds Zone Controller; local radio link — TBD",
+        "notes": "Queue control boundary for the Haunted Radio. It must expose enable, standby, show and armed-haunted modes; editable 6:45 PM schedule and scene settings; volume and playback controls; service test/startle commands; and online, mode, playback and startup-self-test status to the Main Hub. The radio must retain its local schedule and show behavior if the Hub connection is unavailable."
+      }
+    }
   ]
 }
