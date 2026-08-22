@@ -57,7 +57,7 @@ Parent: `HNA-26-CTL-005` Front House Zone Controller, planned and controlled by 
 | Scene / room | Existing and planned assets | Current control | Recommended next step |
 | --- | --- | --- | --- |
 | Facade Windows | `HNA-26-PRJ-002` Facade Windows — Planned | **Confirmed:** separate from Mia & Roy; approximately three to four silent projectors; local operation with no audio | Automatic media-loop startup on power is desired. Select projector count/models, player and synchronization method, then determine automatic projector startup. No Hub control is required. |
-| Front Porch | `HNA-26-ANM-003` Rocking Chair — Built | Timer Relay, Local Only | Keep the timer as local fallback. Add remote enable/test and status only if useful; no room controller is required for one effect. |
+| Front Porch | `HNA-26-ANM-003` Rocking Chair — Built | **Confirmed:** 12 V DC wiper motor on a local timer-relay repeating loop | Keep completely local; no room controller or Hub control is required. Document the rocking/rest intervals and upstream power switch. |
 | Reception Room | `HNA-26-ANM-004` Suit of Armor — Planned | ESP32 / Wi-Fi, Local Only | This is already a good HollowNet field-node candidate. Connect directly to `CTL-005` unless more synchronized Reception Room effects are planned. |
 
 ## Upper House

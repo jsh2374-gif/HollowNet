@@ -499,6 +499,20 @@
         "controlledBy": "",
         "notes": "Confirmed walkthrough: Facade Windows is a separate planned projection scene from Mia & Roy. It will use approximately three to four projectors, remain completely local and have no audio. The desired behavior is for the media player and projection loop to start automatically when powered. Final projector count/models, player architecture, synchronization and automatic projector startup method remain TBD."
       }
+    },
+    {
+      "assetId": "HNA-26-ANM-003",
+      "confirmedAt": "2026-08-22T17:40:00.000Z",
+      "fields": {
+        "power": "12 V DC; upstream supply/switch — TBD",
+        "outputs": "12 V DC wiper-motor rocking motion",
+        "trigger": "Local timer-relay repeating loop",
+        "controller": "Local timer relay",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "notes": "Confirmed walkthrough: the Front Porch Rocking Chair uses a 12 V DC wiper motor and a local timer relay to repeat its rocking loop. It remains completely local with no HollowNet operational control. Exact rocking/rest intervals and the upstream power-switch behavior remain to be documented."
+      }
     }
   ]
 }
