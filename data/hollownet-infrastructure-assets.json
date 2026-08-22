@@ -41,7 +41,7 @@
       "notes": "Planned zone boundary for the Front Gate, bridge and fountain, Garden Shed, exterior facade, Queue and shared exterior utilities.",
       "power": "TBD",
       "status": "Planned",
-      "affects": "HNA-26-CTL-002\nHNA-26-PRJ-001",
+      "affects": "HNA-26-CTL-002\nHNA-26-CTL-014\nHNA-26-PRJ-001",
       "assetId": "HNA-26-CTL-004",
       "network": "Ethernet / Wi-Fi uplink; field network — TBD",
       "outputs": "Zone commands, status aggregation, service controls",
@@ -332,6 +332,36 @@
       "firmwareLinks": "",
       "maintenanceLog": "",
       "serviceHistory": []
+    },
+    {
+      "name": "Front Gate Controller",
+      "room": "Front Gate",
+      "type": "Controller",
+      "zone": "Exterior Grounds",
+      "notes": "Confirmed Front Gate control boundary. A hardwired actor switch triggers pneumatic motion and audio together and remains available as the local fallback. HollowNet adds remote enable, service test and emergency-stop commands. Final valve, I/O hardware, pressure, vent/hold behavior and sensing require build-time validation.",
+      "power": "12 V DC controls; compressed-air interface — pressure TBD",
+      "status": "Planned",
+      "affects": "HNA-26-ANM-001",
+      "assetId": "HNA-26-CTL-014",
+      "network": "Exterior Zone uplink — TBD; hardwired local actor switch",
+      "outputs": "Pneumatic valve command, audio trigger, enable, test, emergency stop",
+      "trigger": "Local actor switch / Exterior Zone Controller / Main Hub",
+      "createdAt": "2026-08-22T14:10:00.000Z",
+      "reportsTo": "Zone Controller",
+      "updatedAt": "2026-08-22T14:10:00.000Z",
+      "controller": "ESP32 / industrial I/O interface — TBD",
+      "inspection": "Ready",
+      "photoLinks": "",
+      "videoLinks": "",
+      "assetFolder": "HollowNet Assets/HNA-26-CTL-014 - Front Gate Controller",
+      "criticality": "Critical",
+      "manualLinks": "",
+      "wiringLinks": "",
+      "controlledBy": "HNA-26-CTL-004",
+      "controllerId": "",
+      "firmwareLinks": "",
+      "maintenanceLog": "",
+      "serviceHistory": []
     }
   ],
   "updates": [
@@ -341,6 +371,20 @@
     {"assetId": "HNA-26-SCN-001", "controlledBy": "HNA-26-CTL-011"},
     {"assetId": "HNA-26-VID-002", "controlledBy": "HNA-26-CTL-012"},
     {"assetId": "HNA-26-VID-003", "controlledBy": "HNA-26-CTL-012"},
-    {"assetId": "HNA-26-SCN-005", "controlledBy": "HNA-26-CTL-013"}
+    {"assetId": "HNA-26-SCN-005", "controlledBy": "HNA-26-CTL-013"},
+    {
+      "assetId": "HNA-26-ANM-001",
+      "confirmedAt": "2026-08-22T14:10:00.000Z",
+      "fields": {
+        "power": "12 V DC controls; compressed air — pressure TBD",
+        "outputs": "Pneumatic gate motion, audio",
+        "trigger": "Actor switch triggers motion + audio; local fallback; HollowNet enable/test/emergency stop",
+        "controller": "Pneumatic controls + ESP32 interface — TBD",
+        "network": "Hardwired local switch; HollowNet field network — TBD",
+        "reportsTo": "Room Controller",
+        "controlledBy": "HNA-26-CTL-014",
+        "notes": "Confirmed walkthrough: gate motion is pneumatic. The current actor switch triggers motion and audio together and remains the local fallback. Main Hub remote enable, test and emergency stop are required. Emergency stop must de-energize the valve; final pneumatic vent/hold behavior and sensing must be validated before operation."
+      }
+    }
   ]
 }

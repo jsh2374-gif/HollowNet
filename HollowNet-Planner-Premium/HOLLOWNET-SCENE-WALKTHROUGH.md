@@ -27,7 +27,7 @@ Parent: `HNA-26-CTL-004` Exterior Grounds Zone Controller, planned and controlle
 
 | Scene / room | Existing and planned assets | Current control | Recommended next step |
 | --- | --- | --- | --- |
-| Front Gate | `HNA-26-ANM-001` Front Gate — Built | Local Only | Review actuator, actor switch, limit/safety inputs and motor or pneumatic driver. Decide whether it needs a dedicated field node or only status reporting to `CTL-004`. |
+| Front Gate | `HNA-26-ANM-001` Front Gate — Built | Pneumatic motion and audio share the actor switch; switch remains local fallback | **Confirmed:** use `HNA-26-CTL-014` Front Gate Controller under `CTL-004`. Main Hub remote enable, test and emergency stop are required. Select the ESP32/industrial I/O, valve interface and sensing; validate de-energized valve vent/hold behavior before operation. |
 | Bridge / Fountain | `HNA-26-LGT-001` Jack-O-Lanterns — Built | Local Only | A small lighting node can report directly to `CTL-004`; a room controller is unnecessary unless more bridge effects are added. |
 | Garden Shed | `HNA-26-ANM-002` Caretaker — Built | Local Only | Document the mechanism and trigger. Add a field node under `CTL-004` when remote test and status are desired. |
 | Exterior Facade | `HNA-26-PRJ-001` Mia & Roy — Installed | Reports to Zone Controller | Assign directly to `CTL-004`; no separate facade controller is required yet. |

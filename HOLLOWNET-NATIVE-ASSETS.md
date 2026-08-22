@@ -36,19 +36,21 @@ The additive pack at `data/hollownet-native-assets.json` contains:
 | `HNA-26-ANM-013` | Bog Coffin Skeleton | Bog | Controlled by `HNA-26-CTL-001` |
 | `HNA-26-ANM-014` | Bog Stake Skeleton | Bog | Controlled by `HNA-26-CTL-001` |
 
-The infrastructure pack at `data/hollownet-infrastructure-assets.json` adds `HNA-26-CTL-003` through `HNA-26-CTL-013`: the Main Hub, seven additional zone controllers and the First Room, Pantry and Furnace Room controllers already implied by existing records.
+The infrastructure pack at `data/hollownet-infrastructure-assets.json` adds `HNA-26-CTL-003` through `HNA-26-CTL-014`: the Main Hub, seven additional zone controllers, the First Room, Pantry and Furnace Room controllers already implied by existing records, and the confirmed Front Gate Controller.
 
-The planner automatically overlays missing records from both packs and fills only missing controller links, so the complete control map is immediately visible without editing access. Existing populated fields and matching Asset IDs always win and are never overwritten.
+The planner automatically overlays missing records from both packs, fills missing controller links and applies timestamped walkthrough decisions, so the complete control map is immediately visible without editing access. A newer user edit always wins over a confirmed walkthrough update.
 
 To make the additions permanent in the Supabase-backed shared workspace, unlock editing and choose **Save Control Map to Cloud**. The normal cloud-sync path then saves the combined registry.
 
-`data/hollownet-planner-backup-2026-08-22.json` is the uploaded 31-record planner backup plus both asset packs. It contains 49 unique Asset IDs and is retained as the complete migration snapshot.
+`data/hollownet-planner-backup-2026-08-22.json` is the uploaded 31-record planner backup plus both asset packs. It contains 50 unique Asset IDs and is retained as the complete migration snapshot.
 
 ## Hierarchy
 
 ```text
 HNA-26-CTL-003 HollowNet Main Hub
 ├── HNA-26-CTL-004 Exterior Grounds Zone Controller
+│   ├── HNA-26-CTL-014 Front Gate Controller
+│   │   └── HNA-26-ANM-001 Front Gate
 │   └── HNA-26-CTL-002 Queue Zone Controller
 │       └── HNA-26-SCN-006 Haunted Radio
 ├── HNA-26-CTL-005 Front House Zone Controller

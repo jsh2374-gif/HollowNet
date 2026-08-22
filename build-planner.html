@@ -223,6 +223,15 @@ async function mergeNativeAssets(){
   updates.forEach(patch => {
     const asset = assets.find(record => record.assetId === patch.assetId);
     if(!asset) return;
+    if(patch.fields && patch.confirmedAt){
+      const confirmedTime = Date.parse(patch.confirmedAt) || 0;
+      const currentTime = Date.parse(asset.updatedAt || "") || 0;
+      if(currentTime < confirmedTime){
+        Object.assign(asset,patch.fields,{updatedAt:patch.confirmedAt});
+        updated++;
+      }
+      return;
+    }
     let changed = false;
     Object.entries(patch).forEach(([key,value]) => {
       if(key !== "assetId" && !asset[key] && value){ asset[key] = value; changed = true; }
