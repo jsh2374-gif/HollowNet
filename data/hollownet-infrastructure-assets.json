@@ -446,16 +446,16 @@
     },
     {
       "assetId": "HNA-26-PRJ-001",
-      "confirmedAt": "2026-08-22T15:20:00.000Z",
+      "confirmedAt": "2026-08-22T15:35:00.000Z",
       "fields": {
         "power": "120 V AC projector; 5 V DC Raspberry Pi",
         "outputs": "Silent projection; no audio",
-        "trigger": "Raspberry Pi auto-starts loop at boot; projector starts manually",
-        "controller": "Raspberry Pi 4",
-        "network": "Wi-Fi; HollowNet control and monitoring planned",
+        "trigger": "Current: Pi auto-starts loop at boot and projector starts manually; planned: automatic projector startup",
+        "controller": "Raspberry Pi 4; projector automation interface — TBD",
+        "network": "Wi-Fi; planned Hub control plus Pi and playback monitoring",
         "reportsTo": "Zone Controller — planned; currently local",
         "controlledBy": "HNA-26-CTL-004",
-        "notes": "Confirmed walkthrough: the Raspberry Pi automatically starts the silent Mia & Roy projection loop when powered. The projector currently requires manual startup. Operation remains local for now, with future Main Hub control and monitoring planned through the Exterior Grounds Zone Controller; the exact remote command and status set remains to be defined."
+        "notes": "Confirmed walkthrough: the Raspberry Pi automatically starts the silent Mia & Roy projection loop when powered; the projector currently requires manual startup. Future HollowNet integration through the Exterior Grounds Zone Controller must show Pi-online and video-loop-running status and provide start, stop, restart-loop and reboot-Pi controls. Automatic projector startup is also required; its implementation remains TBD pending the projector model and supported control method."
       }
     }
   ]
