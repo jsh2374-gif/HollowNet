@@ -429,6 +429,20 @@
         "controlledBy": "HNA-26-CTL-015",
         "notes": "Confirmed walkthrough: the Bridge/Fountain jack-o-lanterns are divided across three 12 V AC flicker circuits driven by an existing SimFlame LV unit. The unit receives power from the Garden Shed and starts automatically whenever the shed is powered. Main Hub control is not required at this time."
       }
+    },
+    {
+      "assetId": "HNA-26-ANM-002",
+      "confirmedAt": "2026-08-22T15:05:00.000Z",
+      "fields": {
+        "power": "12 V DC from Garden Shed power system",
+        "outputs": "12 V DC wiper motor, LED lantern",
+        "trigger": "Garden Shed power on; continuous motion and lantern",
+        "controller": "Direct local power; no HollowNet controller",
+        "network": "None — local power-following effect",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "notes": "Confirmed walkthrough: the Caretaker uses a 12 V DC wiper motor and an LED lantern. Both start with Garden Shed power; the motor runs continuously while powered. The effect remains local, with no Main Hub control required."
+      }
     }
   ]
 }
