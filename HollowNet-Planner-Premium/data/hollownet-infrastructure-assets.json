@@ -618,6 +618,21 @@
         "maintenanceLog": "HollowNet maintenance record required: log date, operator, trigger remote, Raspberry Pi, skeleton-reflection lighting, actor reveal lighting, hanging/drop equipment, physical safety inspection, manual reset check, repairs and notes. No service events are recorded yet.",
         "notes": "Confirmed walkthrough: the Library Hanging Transformation is a 20-second local actor scene. The hanging actor starts the sequence with a remote. Lighting flashes on a reflected skeleton positioned over the real actor, then changes from the skeleton image to the live actor as the actor drops down. After each performance, the actor must manually reset the effect before it can run again. The Raspberry Pi and scene remain completely local with no Hub operational control. Exact lighting channels, remote type, power distribution, actor/drop equipment and reset procedure remain to be documented."
       }
+    },
+    {
+      "assetId": "HNA-26-ANM-007",
+      "confirmedAt": "2026-08-22T20:15:00.000Z",
+      "fields": {
+        "power": "12 V DC movement motor; dedicated illusion light supply — voltage TBD",
+        "outputs": "Lit Pepper's Ghost illusion with subtle motorized movement",
+        "trigger": "TBD — switching, timing and reset behavior not yet confirmed",
+        "controller": "Local light and 12 V motor controls — details TBD",
+        "network": "None — completely local operation",
+        "reportsTo": "Local Only",
+        "controlledBy": "",
+        "maintenanceLog": "HollowNet maintenance record required: log date, operator, Pepper's Ghost reflective surface, dedicated light, 12 V motor, movement linkage, mounting, repairs and notes. No service events are recorded yet.",
+        "notes": "Confirmed walkthrough: the Back Hall Ghost is a Pepper's Ghost illusion illuminated by a dedicated light. A 12 V motor provides slight movement to the ghost. It currently remains local. The light voltage, motor mechanism, power switching, trigger, run pattern and reset behavior remain to be documented."
+      }
     }
   ]
 }
