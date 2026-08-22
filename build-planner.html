@@ -48,6 +48,7 @@ input,select,textarea{width:100%;color:var(--text);background:#09090b;border:1px
       <div class="hero-actions">
         <button class="btn primary" onclick="scrollToForm()">＋ Add Build</button>
         <a class="btn" href="index.html">Asset Planner</a>
+        <a class="btn" href="https://github.com/jsh2374-gif/HollowNet/blob/main/HOLLOWNET-SCENE-WALKTHROUGH.md" target="_blank" rel="noopener">Scene Walkthrough</a>
         <button class="btn quiet" onclick="exportJSON()">Export Backup</button>
         <button class="btn quiet" onclick="openCloudModal()">Cloud Sync</button>
       </div>
@@ -207,15 +208,28 @@ function cls(str){ return String(str || "").replaceAll(" ","-").replace(/[^a-zA-
 function normalizeBuild(build){ return {...build, materials:Array.isArray(build.materials) ? build.materials : [], progress:Number(build.progress || 0)}; }
 function normalizeBuilds(){ builds = builds.map(normalizeBuild); }
 async function mergeNativeAssets(){
-  const response = await fetch("data/hollownet-native-assets.json",{cache:"no-store"});
-  if(!response.ok) throw new Error(`HollowNet-native assets could not be loaded (${response.status}).`);
-  const payload = await response.json();
-  const incoming = Array.isArray(payload) ? payload : payload.items;
-  if(!Array.isArray(incoming)) throw new Error("The HollowNet-native asset pack is invalid.");
+  const packPaths = ["data/hollownet-native-assets.json","data/hollownet-infrastructure-assets.json"];
+  const payloads = await Promise.all(packPaths.map(async path => {
+    const response = await fetch(path,{cache:"no-store"});
+    if(!response.ok) throw new Error(`HollowNet assets could not be loaded (${response.status}).`);
+    return response.json();
+  }));
+  const incoming = payloads.flatMap(payload => Array.isArray(payload) ? payload : payload.items || []);
+  const updates = payloads.flatMap(payload => Array.isArray(payload?.updates) ? payload.updates : []);
   const knownIds = new Set(assets.map(asset => asset.assetId));
   const additions = incoming.filter(asset => asset.assetId && asset.name && !knownIds.has(asset.assetId));
   assets.push(...additions);
-  return additions.length;
+  let updated = 0;
+  updates.forEach(patch => {
+    const asset = assets.find(record => record.assetId === patch.assetId);
+    if(!asset) return;
+    let changed = false;
+    Object.entries(patch).forEach(([key,value]) => {
+      if(key !== "assetId" && !asset[key] && value){ asset[key] = value; changed = true; }
+    });
+    if(changed) updated++;
+  });
+  return additions.length + updated;
 }
 async function showNativeAssetsImmediately(){
   try{

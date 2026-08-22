@@ -517,6 +517,7 @@ body.asset-view .shell{display:none}
       <div class="hero-actions">
         <button class="btn primary" onclick="scrollToForm()">＋ Add Asset</button>
         <a class="btn" href="build-planner.html">Build Planner</a>
+        <a class="btn" href="https://github.com/jsh2374-gif/HollowNet/blob/main/HOLLOWNET-SCENE-WALKTHROUGH.md" target="_blank" rel="noopener">Scene Walkthrough</a>
         <button class="btn" onclick="printLabels()">Print QR Labels</button>
         <button class="btn quiet" onclick="exportJSON()">Export Backup</button>
         <button class="btn quiet" onclick="openCloudModal()">Cloud Sync</button>
@@ -746,7 +747,7 @@ body.asset-view .shell{display:none}
           <button class="btn" onclick="exportJSON()">Export JSON</button>
           <button class="btn" onclick="exportCSV()">Export CSV</button>
           <button class="btn" onclick="importJSON()">Import</button>
-          <button class="btn" onclick="installNativeAssetPack()">Save Native Assets to Cloud</button>
+          <button class="btn" onclick="installNativeAssetPack()">Save Control Map to Cloud</button>
           <button class="btn" onclick="printLabels()">Print Labels</button>
           <button class="btn" onclick="exportAllReadmes()">Export READMEs</button>
           <button class="btn danger" onclick="clearAll()">Clear All</button>
@@ -892,15 +893,28 @@ function normalizeItem(item){
 }
 function normalizeItems(){ items = items.map(normalizeItem); }
 async function mergeNativeAssets(){
-  const response = await fetch("data/hollownet-native-assets.json",{cache:"no-store"});
-  if(!response.ok) throw new Error(`HollowNet-native assets could not be loaded (${response.status}).`);
-  const payload = await response.json();
-  const incoming = Array.isArray(payload) ? payload : payload.items;
-  if(!Array.isArray(incoming)) throw new Error("The HollowNet-native asset pack is invalid.");
+  const packPaths = ["data/hollownet-native-assets.json","data/hollownet-infrastructure-assets.json"];
+  const payloads = await Promise.all(packPaths.map(async path => {
+    const response = await fetch(path,{cache:"no-store"});
+    if(!response.ok) throw new Error(`HollowNet assets could not be loaded (${response.status}).`);
+    return response.json();
+  }));
+  const incoming = payloads.flatMap(payload => Array.isArray(payload) ? payload : payload.items || []);
+  const updates = payloads.flatMap(payload => Array.isArray(payload?.updates) ? payload.updates : []);
   const knownIds = new Set(items.map(item => item.assetId));
   const additions = incoming.filter(item => item.assetId && item.name && !knownIds.has(item.assetId)).map(normalizeItem);
   items.push(...additions);
-  return additions.length;
+  let updated = 0;
+  updates.forEach(patch => {
+    const item = items.find(record => record.assetId === patch.assetId);
+    if(!item) return;
+    let changed = false;
+    Object.entries(patch).forEach(([key,value]) => {
+      if(key !== "assetId" && !item[key] && value){ item[key] = value; changed = true; }
+    });
+    if(changed) updated++;
+  });
+  return additions.length + updated;
 }
 async function showNativeAssetsImmediately(){
   try{
@@ -1527,11 +1541,11 @@ function importJSON(){
 }
 async function installNativeAssetPack(){
   if(!requireEditingPassword()) return;
-  if(!confirm("Save the Haunted Radio, Queue controller and Bog framework records to the shared cloud workspace? Existing records and matching Asset IDs will not be changed.")) return;
+  if(!confirm("Save the Main Hub, zone and room controllers, Haunted Radio and Bog framework to the shared cloud workspace? Existing populated fields will not be changed.")) return;
   try{
     const additions = await mergeNativeAssets();
     persist();
-    notify(additions ? `${additions} HollowNet-native asset${additions === 1 ? "" : "s"} added and queued for cloud sync.` : "HollowNet-native assets queued for cloud sync.");
+    notify(additions ? `${additions} control-map record${additions === 1 ? "" : "s"} added or linked and queued for cloud sync.` : "The HollowNet control map is queued for cloud sync.");
   }catch(error){ alert(error.message); }
 }
 function handleImport(event){
