@@ -443,6 +443,20 @@
         "controlledBy": "",
         "notes": "Confirmed walkthrough: the Caretaker uses a 12 V DC wiper motor and an LED lantern. Both start with Garden Shed power; the motor runs continuously while powered. The effect remains local, with no Main Hub control required."
       }
+    },
+    {
+      "assetId": "HNA-26-PRJ-001",
+      "confirmedAt": "2026-08-22T15:20:00.000Z",
+      "fields": {
+        "power": "120 V AC projector; 5 V DC Raspberry Pi",
+        "outputs": "Silent projection; no audio",
+        "trigger": "Raspberry Pi auto-starts loop at boot; projector starts manually",
+        "controller": "Raspberry Pi 4",
+        "network": "Wi-Fi; HollowNet control and monitoring planned",
+        "reportsTo": "Zone Controller — planned; currently local",
+        "controlledBy": "HNA-26-CTL-004",
+        "notes": "Confirmed walkthrough: the Raspberry Pi automatically starts the silent Mia & Roy projection loop when powered. The projector currently requires manual startup. Operation remains local for now, with future Main Hub control and monitoring planned through the Exterior Grounds Zone Controller; the exact remote command and status set remains to be defined."
+      }
     }
   ]
 }
