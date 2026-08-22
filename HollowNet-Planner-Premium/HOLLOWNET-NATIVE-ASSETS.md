@@ -71,4 +71,4 @@ HNA-26-CTL-003 HollowNet Main Hub
 
 See `HOLLOWNET-SCENE-WALKTHROUGH.md` for the room-by-room review and the recommended controller decisions that remain open.
 
-The built `HNA-26-CTL-015` Bridge/Fountain SimFlame Controller currently remains local and controls `HNA-26-LGT-001`. It will be placed under `HNA-26-CTL-004` only if remote HollowNet control is confirmed during the walkthrough.
+The built `HNA-26-CTL-015` Bridge/Fountain SimFlame Controller remains local and controls `HNA-26-LGT-001`. It receives power from the Garden Shed and starts its three flicker circuits automatically with shed power. Main Hub control is not required at this time.
